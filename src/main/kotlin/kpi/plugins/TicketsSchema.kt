@@ -12,22 +12,26 @@ data class Ticket(
     val ticketId: Int,
     val placeNumber: Int,
     val time: Long, // timestamp
-    val movieTitle: String
+    val movieTitle: String,
+    val orderId: Int
 )
 
 @Serializable
 data class TicketDTO(
     val placeNumber: Int,
     val time: Long, // timestamp
-    val movieTitle: String
+    val movieTitle: String,
+    val orderId: Int? = null
 )
 
-class TicketService(private val database: Database) {
+class TicketService(database: Database) {
     object Tickets : Table() {
-        val ticket_id = integer("id").autoIncrement()
+        val ticket_id = integer("ticket_id").autoIncrement()
+
         val place_number = integer("place_number")
         val time = long("time")
         val movie_title = varchar("movie_title", length = 50)
+        val order_id = reference("order_id", OrderService.Orders.order_id)
 
         override val primaryKey = PrimaryKey(ticket_id)
     }
@@ -38,7 +42,7 @@ class TicketService(private val database: Database) {
         }
     }
 
-    suspend fun <T> dbQuery(block: suspend () -> T): T =
+    private suspend fun <T> dbQuery(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
 
     suspend fun create(ticketDTO: TicketDTO): Int = dbQuery {
@@ -46,11 +50,17 @@ class TicketService(private val database: Database) {
             it[place_number] = ticketDTO.placeNumber
             it[time] = ticketDTO.time
             it[movie_title] = ticketDTO.movieTitle
+            it[order_id] = ticketDTO.orderId!!
         }[Tickets.ticket_id]
     }
 
     suspend fun readAll(): List<Ticket> = dbQuery {
         Tickets.selectAll()
+            .map { it.toTicket() }
+    }
+
+    suspend fun readAllWithOrderId(orderId: Int): List<Ticket> = dbQuery {
+        Tickets.select { Tickets.order_id eq orderId}
             .map { it.toTicket() }
     }
 
@@ -65,12 +75,19 @@ class TicketService(private val database: Database) {
             it[place_number] = ticketDTO.placeNumber
             it[time] = ticketDTO.time
             it[movie_title] = ticketDTO.movieTitle
+            it[order_id] = ticketDTO.orderId!!
         }
     }
 
     suspend fun delete(ticketId: Int) {
         dbQuery {
-            Tickets.deleteWhere { ticket_id.eq(ticketId) }
+            Tickets.deleteWhere { ticket_id eq ticketId }
+        }
+    }
+
+    suspend fun deleteAllWithOrderId(orderId: Int) {
+        dbQuery {
+            Tickets.deleteWhere { order_id eq orderId }
         }
     }
 
@@ -78,6 +95,7 @@ class TicketService(private val database: Database) {
         ticketId = this[Tickets.ticket_id],
         placeNumber = this[Tickets.place_number],
         time = this[Tickets.time],
-        movieTitle = this[Tickets.movie_title]
+        movieTitle = this[Tickets.movie_title],
+        orderId = this[Tickets.order_id]
     )
 }

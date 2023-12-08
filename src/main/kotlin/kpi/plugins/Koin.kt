@@ -24,6 +24,7 @@ val appModule = module {
             password = "postgres_pass"
         )
     }
+    single { ViewerService(get()) }
     single { TicketService(get()) }
-    single { OrderService(get()) }
+    single { OrderService(get(), get(), get()) }
 }
