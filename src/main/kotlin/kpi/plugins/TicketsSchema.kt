@@ -13,7 +13,7 @@ data class Ticket(
     val placeNumber: Int,
     val time: Long, // timestamp
     val movieTitle: String,
-    val orderId: Int
+    val orderId: Int?
 )
 
 @Serializable
@@ -31,7 +31,7 @@ class TicketService(database: Database) {
         val place_number = integer("place_number")
         val time = long("time")
         val movie_title = varchar("movie_title", length = 50)
-        val order_id = reference("order_id", OrderService.Orders.order_id)
+        val order_id = reference("order_id", OrderService.Orders.order_id).nullable()
 
         override val primaryKey = PrimaryKey(ticket_id)
     }
@@ -50,7 +50,7 @@ class TicketService(database: Database) {
             it[place_number] = ticketDTO.placeNumber
             it[time] = ticketDTO.time
             it[movie_title] = ticketDTO.movieTitle
-            it[order_id] = ticketDTO.orderId!!
+            it[order_id] = ticketDTO.orderId
         }[Tickets.ticket_id]
     }
 
@@ -75,7 +75,13 @@ class TicketService(database: Database) {
             it[place_number] = ticketDTO.placeNumber
             it[time] = ticketDTO.time
             it[movie_title] = ticketDTO.movieTitle
-            it[order_id] = ticketDTO.orderId!!
+            it[order_id] = ticketDTO.orderId
+        }
+    }
+
+    suspend fun updateTicketOrderIds(ticketIds: List<Int>, orderId: Int) = dbQuery {
+        Tickets.update({ Tickets.ticket_id inList ticketIds }) {
+            it[order_id] = orderId
         }
     }
 
