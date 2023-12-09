@@ -17,7 +17,9 @@ fun Application.configureFrontend() {
             call.respond(
                 ThymeleafContent(
                     "index",
-                    mapOf("tickets" to ticketService.readAll())
+                    mapOf(
+                        "tickets" to ticketService.readAll().filter { it.orderId == null }
+                    )
                 )
             )
         }

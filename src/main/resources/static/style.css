@@ -57,3 +57,37 @@ h2 {
         text-align: left;
     }
 }
+
+/* Style for checkboxes */
+input[type="checkbox"] {
+    margin-left: 5px;
+}
+
+/* Style for the Buy button */
+button {
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Hover effect for the Buy button */
+button:hover {
+    background-color: #45a049;
+}
+
+/* Responsive design for smaller screens */
+@media screen and (max-width: 600px) {
+    /* Adjust styles for checkboxes on smaller screens if needed */
+    input[type="checkbox"] {
+        margin-left: 0;
+    }
+
+    /* Adjust styles for the Buy button on smaller screens if needed */
+    button {
+        width: 100%;
+        margin-top: 10px;
+    }
+}

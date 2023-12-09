@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css" type="text/css">
+    <title>Movie Theater Tickets</title>
+</head>
+<body>
+
+<h2>Movie Theater Tickets</h2>
+
+<form id="buyForm" method="post" action="/orders">
+    <table border="1">
+        <thead>
+        <tr>
+            <th>Select</th>
+            <th>Movie Title</th>
+            <th>Time</th>
+            <th>Place Number</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Loop through the list of tickets -->
+        <tr th:each="ticket : ${tickets}">
+            <td>
+                <!-- Add a checkbox for each ticket -->
+                <input type="checkbox" name="ticketIds" th:value="${ticket.ticketId}">
+            </td>
+            <td th:text="${ticket.movieTitle}"></td>
+            <!-- Format timestamp to display as a readable date -->
+            <td th:text="${#dates.format(new java.util.Date(ticket.time), 'dd-MM-yyyy HH:mm')}"></td>
+            <td th:text="${ticket.placeNumber}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Add a Buy button to submit the form -->
+    <button type="button" onclick="buyTickets()">Buy</button>
+</form>
+
+<!-- JavaScript to handle the form submission -->
+<script>
+    function buyTickets() {
+        // Get the form element
+        const form = document.getElementById('buyForm');
+
+        // Create an array to store selected ticket ids
+        const selectedTickets = [];
+
+        // Get all checkboxes with the name "ticketIds"
+        let checkboxes = form.elements['ticketIds'];
+
+        if (checkboxes.length === undefined) {
+            checkboxes = [checkboxes]
+        }
+
+        // Loop through checkboxes to find selected ones
+        for (let i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i].checked) {
+                selectedTickets.push(parseInt(checkboxes[i].value)); // Ensure the ticket ids are integers
+                checkboxes[i].checked = false
+            }
+        }
+
+        // Create the JSON object
+        const jsonData = {
+            "viewerId": 1,
+            "ticketIds": selectedTickets
+        };
+
+        // Make a fetch POST request with the JSON payload
+        fetch('/api/orders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Handle the response if needed
+                console.log(data);
+                location.reload();
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+</script>
+
+</body>
+</html>
