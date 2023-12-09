@@ -7,17 +7,33 @@
 </head>
 <body>
 
-<h1 id="greeting">Вітаю, username</h1>
+<h1 id="greeting">Вітаю, username !</h1>
+
+<h2>Ваші замовлення</h2>
+
+<table id="ordersTable">
+    <thead>
+    <tr>
+        <th>Номер замовлення</th>
+        <th>Назва фільму</th>
+        <th>Час</th>
+        <th>Номер місця</th>
+    </tr>
+    </thead>
+    <tbody id="ordersBody">
+    </tbody>
+</table>
+
 <h2>Купити квитки</h2>
 
 <form id="buyForm" method="post" action="/orders">
-    <table border="1">
+    <table>
         <thead>
         <tr>
-            <th>Select</th>
-            <th>Movie Title</th>
-            <th>Time</th>
-            <th>Place Number</th>
+            <th>Купити</th>
+            <th>Назва фільму</th>
+            <th>Час</th>
+            <th>Номер місця</th>
         </tr>
         </thead>
         <tbody>
@@ -39,8 +55,9 @@
     <button type="button" onclick="buyTickets()">Buy</button>
 </form>
 
+<!-- JavaScript to handle orders display -->
 <script>
-    window.onload = function(){
+    window.onload = function () {
         const viewerId = localStorage.getItem("viewerId")
         if (viewerId) {
             // Make a fetch POST request with the JSON payload
@@ -56,6 +73,43 @@
                 .then(data => {
                     const greeting = document.getElementById("greeting")
                     greeting.innerText = `Вітаю, ${data.fullName}!`
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        } else {
+            alert("Спочатку зареєструйтесь!")
+        }
+
+        if (viewerId) {
+            // Make a fetch GET request to fetch orders
+            fetch(`/api/viewers/${viewerId}/orders`, {
+                method: 'GET'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Display orders in the table
+                    const ordersTableBody = document.getElementById("ordersBody");
+                    data.forEach(order => {
+                        const row = ordersTableBody.insertRow();
+                        const orderIdCell = row.insertCell()
+                        orderIdCell.innerText = order.orderId;
+                        orderIdCell.rowSpan = order.tickets.length + 1
+
+                        // Loop through the list of tickets in each order
+                        order.tickets.forEach(ticket => {
+                            const ticketRow = ordersTableBody.insertRow()
+                            ticketRow.insertCell().innerText = ticket.movieTitle;
+                            ticketRow.insertCell().innerText = new Date(ticket.time).toLocaleString();
+                            ticketRow.insertCell().innerText = ticket.placeNumber;
+                        });
+                    });
                 })
                 .catch(error => {
                     // Handle errors
@@ -93,7 +147,7 @@
 
         // Create the JSON object
         const jsonData = {
-            "viewerId": 1,
+            "viewerId": localStorage.getItem("viewerId"),
             "ticketIds": selectedTickets
         };
 

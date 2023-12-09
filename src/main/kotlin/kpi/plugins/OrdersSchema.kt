@@ -61,6 +61,11 @@ class OrderService(
             .map { it.toOrder() }
     }
 
+    suspend fun readAllWithViewerId(viewerId: Int): List<Order> = dbQuery {
+        Orders.select { Orders.viewer_id eq viewerId }
+            .map { it.toOrder() }
+    }
+
     suspend fun read(orderId: Int): Order? = dbQuery {
         Orders.select { Orders.order_id eq orderId }
             .map { it.toOrder() }

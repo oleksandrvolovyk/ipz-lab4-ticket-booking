@@ -36,6 +36,16 @@ fun Application.configureDatabases() {
                     }
                 }
 
+                get("/{id}/orders") {
+                    val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
+                    val viewer = viewerService.read(id)
+                    if (viewer != null) {
+                        call.respond(HttpStatusCode.OK, orderService.readAllWithViewerId(viewer.viewerId))
+                    } else {
+                        call.respond(HttpStatusCode.NotFound)
+                    }
+                }
+
                 put("/{id}") {
                     val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
                     val viewerDTO = call.receive<ViewerDTO>()
