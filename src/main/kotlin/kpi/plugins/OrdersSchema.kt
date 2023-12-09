@@ -17,7 +17,7 @@ data class Order(
 @Serializable
 data class OrderDTO(
     val viewerId: Int,
-    val ticketIds: List<Int>? = null
+    val ticketIds: List<Int>
 )
 
 class OrderService(
@@ -50,7 +50,7 @@ class OrderService(
         }
 
         dbQuery {
-            ticketService.updateTicketOrderIds(ticketIds = orderDTO.ticketIds!!, orderId = newOrderId)
+            ticketService.updateTicketOrderIds(ticketIds = orderDTO.ticketIds, orderId = newOrderId)
         }
 
         return newOrderId
