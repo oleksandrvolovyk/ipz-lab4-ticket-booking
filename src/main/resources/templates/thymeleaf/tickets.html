@@ -52,7 +52,10 @@
     </table>
 
     <!-- Add a Buy button to submit the form -->
-    <button type="button" onclick="buyTickets()">Buy</button>
+    <div th:switch="${tickets.size == 0}">
+        <button th:case="true" type="button" onclick="buyTickets()" disabled>Замовити</button>
+        <button th:case="false" type="button" onclick="buyTickets()">Замовити</button>
+    </div>
 </form>
 
 <!-- JavaScript to handle orders display -->
@@ -143,6 +146,10 @@
                 selectedTickets.push(parseInt(checkboxes[i].value)); // Ensure the ticket ids are integers
                 checkboxes[i].checked = false
             }
+        }
+
+        if (selectedTickets.length === 0) {
+            return
         }
 
         // Create the JSON object
