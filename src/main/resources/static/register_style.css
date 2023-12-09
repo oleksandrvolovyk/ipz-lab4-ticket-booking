@@ -1,0 +1,50 @@
+body {
+    background-color: #f2f2f2; /* Сірий бекграунд */
+    color: #000000; /* Чорний текст */
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+h2 {
+    background-color: #333333; /* Чорний фон заголовка */
+    color: #ffffff; /* Білий текст заголовка */
+    padding: 10px;
+    text-align: center;
+    border-radius: 10px;
+}
+
+form {
+    max-width: 400px;
+    margin: 20px auto;
+    background-color: #ffffff; /* Білий фон форми */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Тінь */
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+input,
+select,
+button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #333333; /* Чорний фон кнопки */
+    color: #ffffff; /* Білий текст кнопки */
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #555555; /* Темно-сірий фон кнопки при наведенні */
+}

@@ -2,12 +2,13 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="/static/style.css" type="text/css">
-    <title>Movie Theater Tickets</title>
+    <link rel="stylesheet" href="/static/tickets_style.css" type="text/css">
+    <title>Lab4. Buy Tickets</title>
 </head>
 <body>
 
-<h2>Movie Theater Tickets</h2>
+<h1 id="greeting">Вітаю, username</h1>
+<h2>Купити квитки</h2>
 
 <form id="buyForm" method="post" action="/orders">
     <table border="1">
@@ -37,6 +38,34 @@
     <!-- Add a Buy button to submit the form -->
     <button type="button" onclick="buyTickets()">Buy</button>
 </form>
+
+<script>
+    window.onload = function(){
+        const viewerId = localStorage.getItem("viewerId")
+        if (viewerId) {
+            // Make a fetch POST request with the JSON payload
+            fetch(`/api/viewers/${viewerId}`, {
+                method: 'GET'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const greeting = document.getElementById("greeting")
+                    greeting.innerText = `Вітаю, ${data.fullName}!`
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        } else {
+            alert("Спочатку зареєструйтесь!")
+        }
+    };
+</script>
 
 <!-- JavaScript to handle the form submission -->
 <script>

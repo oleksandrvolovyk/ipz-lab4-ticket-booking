@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/register_style.css" type="text/css">
+    <title>Lab4. Register</title>
+</head>
+
+<body>
+<h2>
+    Реєстрація нового користувача
+</h2>
+<form id="userForm">
+    <label for="userName">ПІБ</label>
+    <input id="userName" type="text" name="userName" required>
+
+    <label for="userAge">Вік</label>
+    <input id="userAge" type="text" name="userAge" required>
+
+    <label for="userSex">Стать</label>
+    <select id="userSex">
+        <option value="male">Чоловік</option>
+        <option value="female">Жінка</option>
+        <option value="other" selected>Інше</option>
+    </select>
+    <button type="button" onclick="saveUser()">Зберегти користувача</button>
+</form>
+<script>
+    function saveUser() {
+        const name = document.getElementById("userName").value
+        const age = document.getElementById("userAge").value
+        const sex = document.getElementById("userSex").value
+
+        const jsonData = {
+            'fullName': name,
+            'age': age,
+            'sex': sex
+        }
+
+        fetch('/api/viewers', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Handle the response if needed
+                console.log(data);
+                localStorage.setItem("viewerId", data)
+                const url = location.href
+                location.replace(`${url}/tickets`);
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+</script>
+
+</body>
+</html>

@@ -15,8 +15,14 @@ fun Application.configureFrontend() {
     routing {
         get("/") {
             call.respond(
+                ThymeleafContent("register", emptyMap())
+            )
+        }
+
+        get("/tickets") {
+            call.respond(
                 ThymeleafContent(
-                    "index",
+                    "tickets",
                     mapOf(
                         "tickets" to ticketService.readAll().filter { it.orderId == null }
                     )
