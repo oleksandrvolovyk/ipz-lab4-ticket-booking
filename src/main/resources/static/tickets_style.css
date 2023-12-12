@@ -91,3 +91,16 @@ button:hover {
         margin-top: 10px;
     }
 }
+
+select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 5px;
+}
+
+option {
+    padding: 5px;
+}

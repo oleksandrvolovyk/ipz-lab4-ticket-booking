@@ -102,7 +102,13 @@ fun Application.configureDatabases() {
                     call.respond(HttpStatusCode.Created, id)
                 }
                 get {
-                    call.respond(HttpStatusCode.OK, ticketService.readAll())
+                    val movieTitle = call.request.queryParameters["movieTitle"]
+                    val timestamp = call.request.queryParameters["timestamp"]?.toLongOrNull()
+                    if (movieTitle != null && timestamp != null ) {
+                        call.respond(HttpStatusCode.OK, ticketService.readAllWithMovieTitleAndTime(movieTitle, timestamp))
+                    } else {
+                        call.respond(HttpStatusCode.OK, ticketService.readAll())
+                    }
                 }
                 get("/{id}") {
                     val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")

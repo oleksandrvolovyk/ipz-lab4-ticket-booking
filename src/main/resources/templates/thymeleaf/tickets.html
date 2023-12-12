@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
+Ту
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/static/tickets_style.css" type="text/css">
     <title>Lab4. Buy Tickets</title>
 </head>
+
 <body>
 
 <h1 id="greeting">Вітаю, username !</h1>
@@ -30,23 +32,33 @@
     <table>
         <thead>
         <tr>
-            <th>Купити</th>
             <th>Назва фільму</th>
             <th>Час</th>
             <th>Номер місця</th>
         </tr>
         </thead>
         <tbody>
-        <!-- Loop through the list of tickets -->
-        <tr th:each="ticket : ${tickets}">
+        <!-- Loop through the map of movies -->
+        <tr th:each="movie : ${tickets}">
+            <td th:text="${movie.movieTitle}" id="movieTitle"></td>
+
             <td>
-                <!-- Add a checkbox for each ticket -->
-                <input type="checkbox" name="ticketIds" th:value="${ticket.ticketId}">
+                <select name="ticketTimeSelect" onchange="loadTicketPlaceNumbers(this)">
+                    <option th:each="timeAndTicket : ${movie.timesAndTickets}"
+                            th:timestamp="${timeAndTicket.time}"
+                            th:text="${#dates.format(new java.util.Date(timeAndTicket.time), 'dd-MM-yyyy HH:mm')}">
+                    </option>
+                </select>
             </td>
-            <td th:text="${ticket.movieTitle}"></td>
-            <!-- Format timestamp to display as a readable date -->
-            <td th:text="${#dates.format(new java.util.Date(ticket.time), 'dd-MM-yyyy HH:mm')}"></td>
-            <td th:text="${ticket.placeNumber}"></td>
+
+            <td>
+                <select multiple name="ticketPlaceNumberSelect" id="ticketPlaceNumberSelect">
+                    <option th:each="ticket: ${movie.timesAndTickets[0].tickets}"
+                            th:placeNumber="${ticket.placeNumber}">
+                        Місце [[${ticket.placeNumber}]]
+                    </option>
+                </select>
+            </td>
         </tr>
         </tbody>
     </table>
@@ -124,6 +136,48 @@
     };
 </script>
 
+<!-- JavaScript to load ticket place numbers based on the selected time -->
+<script>
+    // Function to load ticket place numbers based on the selected time
+    function loadTicketPlaceNumbers(selectElement) {
+        // Get the selected timestamp
+        const selectedTimestamp = selectElement.options[selectElement.selectedIndex].getAttribute('timestamp');
+
+        // Get the movie title
+        const movieTitle = selectElement.parentElement.parentElement.querySelector("#movieTitle").innerHTML;
+
+        console.log("Movie title: ", movieTitle.innerHTML)
+
+        // Make a fetch GET request to fetch ticket place numbers
+        fetch(`/api/tickets?movieTitle=${movieTitle}&timestamp=${selectedTimestamp}`, {
+            method: 'GET'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Update the ticketPlaceNumberSelect dropdown with the fetched data
+                const ticketPlaceNumberSelect = selectElement.parentElement.parentElement.querySelector("#ticketPlaceNumberSelect");
+                ticketPlaceNumberSelect.innerHTML = ''; // Clear previous options
+
+                // Loop through the list of tickets and add options
+                data.forEach(ticket => {
+                    const option = document.createElement("option");
+                    option.value = ticket.placeNumber;
+                    option.text = `Місце ${ticket.placeNumber}`;
+                    ticketPlaceNumberSelect.add(option);
+                });
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+</script>
+
 <!-- JavaScript to handle the form submission -->
 <script>
     function buyTickets() {
@@ -185,4 +239,5 @@
 </script>
 
 </body>
+
 </html>
