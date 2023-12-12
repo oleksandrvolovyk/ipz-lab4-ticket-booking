@@ -14,9 +14,6 @@ fun Application.configureRouting() {
         }
     }
     routing {
-        // Static plugin. Try to access `/static/tickets.html`
-        static("/static") {
-            resources("static")
-        }
+        staticResources("/static", "static")
     }
 }

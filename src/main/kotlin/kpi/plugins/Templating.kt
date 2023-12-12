@@ -15,11 +15,4 @@ fun Application.configureTemplating() {
             characterEncoding = "utf-8"
         })
     }
-    routing {
-        get("/html-thymeleaf") {
-            call.respond(ThymeleafContent("index", mapOf("user" to ThymeleafUser(1, "user1"))))
-        }
-    }
 }
-
-data class ThymeleafUser(val id: Int, val name: String)
