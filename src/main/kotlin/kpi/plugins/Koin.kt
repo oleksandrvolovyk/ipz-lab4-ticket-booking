@@ -1,6 +1,9 @@
 package kpi.plugins
 
 import io.ktor.server.application.*
+import kpi.backend.OrderService
+import kpi.backend.TicketService
+import kpi.backend.ViewerService
 import org.jetbrains.exposed.sql.Database
 import org.koin.core.context.GlobalContext
 import org.koin.dsl.module

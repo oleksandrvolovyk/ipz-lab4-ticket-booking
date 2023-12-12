@@ -1,4 +1,4 @@
-package kpi.plugins
+package kpi.backend
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.Serializable

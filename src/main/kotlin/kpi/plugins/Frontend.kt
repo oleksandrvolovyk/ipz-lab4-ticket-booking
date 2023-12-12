@@ -4,6 +4,9 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.thymeleaf.*
+import kpi.backend.OrderService
+import kpi.backend.TicketService
+import kpi.backend.ViewerService
 import org.koin.ktor.ext.inject
 
 fun Application.configureFrontend() {

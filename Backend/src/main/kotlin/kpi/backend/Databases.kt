@@ -1,4 +1,4 @@
-package kpi.plugins
+package kpi.backend
 
 import io.ktor.http.*
 import io.ktor.server.application.*

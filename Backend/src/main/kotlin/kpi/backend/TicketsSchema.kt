@@ -1,4 +1,4 @@
-package kpi.plugins
+package kpi.backend
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.Serializable
@@ -60,7 +60,7 @@ class TicketService(database: Database) {
     }
 
     suspend fun readAllWithOrderId(orderId: Int): List<Ticket> = dbQuery {
-        Tickets.select { Tickets.order_id eq orderId}
+        Tickets.select { Tickets.order_id eq orderId }
             .map { it.toTicket() }
     }
 

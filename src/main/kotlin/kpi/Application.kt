@@ -1,6 +1,7 @@
 package kpi
 
 import io.ktor.server.application.*
+import kpi.backend.configureDatabases
 import kpi.plugins.*
 
 fun main(args: Array<String>) {
