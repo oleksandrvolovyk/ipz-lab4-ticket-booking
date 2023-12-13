@@ -54,7 +54,7 @@
             <td>
                 <select multiple name="ticketPlaceNumberSelect" id="ticketPlaceNumberSelect">
                     <option th:each="ticket: ${movie.timesAndTickets[0].tickets}"
-                            th:placeNumber="${ticket.placeNumber}">
+                            th:ticketId="${ticket.ticketId}">
                         Місце [[${ticket.placeNumber}]]
                     </option>
                 </select>
@@ -146,8 +146,6 @@
         // Get the movie title
         const movieTitle = selectElement.parentElement.parentElement.querySelector("#movieTitle").innerHTML;
 
-        console.log("Movie title: ", movieTitle.innerHTML)
-
         // Make a fetch GET request to fetch ticket place numbers
         fetch(`/api/tickets?movieTitle=${movieTitle}&timestamp=${selectedTimestamp}`, {
             method: 'GET'
@@ -166,7 +164,8 @@
                 // Loop through the list of tickets and add options
                 data.forEach(ticket => {
                     const option = document.createElement("option");
-                    option.value = ticket.placeNumber;
+                    console.log(ticket.ticketId)
+                    option.setAttribute("ticketId", ticket.ticketId.toString());
                     option.text = `Місце ${ticket.placeNumber}`;
                     ticketPlaceNumberSelect.add(option);
                 });
@@ -184,26 +183,23 @@
         // Get the form element
         const form = document.getElementById('buyForm');
 
+        // Get all elements with the class "ticketPlaceNumberSelect"
+        const ticketPlaceNumberSelects = form.querySelectorAll('#ticketPlaceNumberSelect');
+
         // Create an array to store selected ticket ids
         const selectedTickets = [];
 
-        // Get all checkboxes with the name "ticketIds"
-        let checkboxes = form.elements['ticketIds'];
+        // Loop through each ticketPlaceNumberSelect
+        ticketPlaceNumberSelects.forEach(select => {
+            // Get the selected options from the current ticketPlaceNumberSelect
+            const selectedOptions = getSelectedOptions(select);
 
-        if (checkboxes.length === undefined) {
-            checkboxes = [checkboxes]
-        }
-
-        // Loop through checkboxes to find selected ones
-        for (let i = 0; i < checkboxes.length; i++) {
-            if (checkboxes[i].checked) {
-                selectedTickets.push(parseInt(checkboxes[i].value)); // Ensure the ticket ids are integers
-                checkboxes[i].checked = false
-            }
-        }
+            // Extract ticket ids from selected options and add them to the array
+            selectedTickets.push(...selectedOptions.map(option => parseInt(option.getAttribute('ticketId'))));
+        });
 
         if (selectedTickets.length === 0) {
-            return
+            return;
         }
 
         // Create the JSON object
@@ -236,7 +232,26 @@
                 console.error('There was a problem with the fetch operation:', error);
             });
     }
+
+    // Return an array of the selected options
+    // select is an HTML select element
+    function getSelectedOptions(select) {
+        const result = [];
+        const options = select && select.options;
+        let opt;
+
+        let i = 0, iLen = options.length;
+        for (; i<iLen; i++) {
+            opt = options[i];
+
+            if (opt.selected) {
+                result.push(opt);
+            }
+        }
+        return result;
+    }
 </script>
+
 
 </body>
 

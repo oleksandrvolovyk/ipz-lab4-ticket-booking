@@ -59,8 +59,8 @@ class TicketService(database: Database) {
             .map { it.toTicket() }
     }
 
-    suspend fun readAllWithMovieTitleAndTime(movieTitle: String, time: Long) = dbQuery {
-        Tickets.select { (Tickets.movie_title eq movieTitle) and (Tickets.time eq time) }
+    suspend fun readAllWithMovieTitleAndTimeAndOrderId(movieTitle: String, time: Long, orderId: Int?) = dbQuery {
+        Tickets.select { (Tickets.movie_title eq movieTitle) and (Tickets.time eq time) and (Tickets.order_id eq orderId) }
             .map { it.toTicket() }
     }
 
