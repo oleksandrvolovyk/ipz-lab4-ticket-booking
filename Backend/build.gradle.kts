@@ -19,6 +19,13 @@ repositories {
     mavenCentral()
 }
 
+application {
+    mainClass.set("io.ktor.server.netty.EngineMain")
+
+    val isDevelopment: Boolean = project.ext.has("development")
+    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
+}
+
 dependencies {
     // Koin for Ktor
     implementation("io.insert-koin:koin-ktor:$koin_version")
