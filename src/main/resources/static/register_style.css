@@ -1,14 +1,16 @@
 body {
-    background-color: #f2f2f2; /* Сірий бекграунд */
-    color: #000000; /* Чорний текст */
+    background-color: #17212b;
+    color: #ffffff;
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    font-size: 14px;
 }
 
 h2 {
-    background-color: #333333; /* Чорний фон заголовка */
-    color: #ffffff; /* Білий текст заголовка */
+    font-size: 24px;
+    background-color: #242f3d;
+    color: #ffffff;
     padding: 10px;
     text-align: center;
     border-radius: 10px;
@@ -17,34 +19,61 @@ h2 {
 form {
     max-width: 400px;
     margin: 20px auto;
-    background-color: #ffffff; /* Білий фон форми */
+    background-color: #242f3d;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Тінь */
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
 }
 
 label {
+    font-size: 18px;
     display: block;
     margin-bottom: 8px;
+    color: #ffffff;
 }
 
 input,
 select,
 button {
+    font-size: 16px;
     width: 100%;
     padding: 10px;
     margin-bottom: 15px;
-    border: 1px solid #ccc;
+    border: 1px solid #242f3d;
     border-radius: 5px;
     box-sizing: border-box;
 }
+input, select{
+    border: none;
+    background-color: #17212b;
+    color: #cccccc;
+}
 
 button {
-    background-color: #333333; /* Чорний фон кнопки */
-    color: #ffffff; /* Білий текст кнопки */
+    background-color: #35465a;
+    color: #64aed9;
     cursor: pointer;
+    transition: all 0.3s ease-in-out;
 }
 
 button:hover {
-    background-color: #555555; /* Темно-сірий фон кнопки при наведенні */
+    background-color: #17212b;
+    transform: translateY(2px);
+}
+@media (max-width: 494px) {
+    form{
+        margin: 20px;
+    }
+    h2 {
+        font-size: 18px;
+    }
+    label {
+        font-size: 14px;
+    }
+
+    input,
+    select,
+    button {
+        font-size: 12px;
+    }
 }
