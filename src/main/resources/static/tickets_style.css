@@ -65,6 +65,7 @@ input[type="checkbox"] {
 
 /* Style for the Buy button */
 button {
+    margin: 32px auto 0;
     padding: 8px 16px;
     background-color: #4CAF50;
     color: white;

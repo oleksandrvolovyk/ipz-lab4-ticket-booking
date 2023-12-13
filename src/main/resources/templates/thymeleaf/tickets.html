@@ -64,7 +64,7 @@
     </table>
 
     <!-- Add a Buy button to submit the form -->
-    <div th:switch="${tickets.size == 0}">
+    <div style="margin: 0 auto; display: flex; justify-content: center" th:switch="${tickets.size == 0}">
         <button th:case="true" type="button" onclick="buyTickets()" disabled>Замовити</button>
         <button th:case="false" type="button" onclick="buyTickets()">Замовити</button>
     </div>
