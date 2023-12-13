@@ -6,10 +6,11 @@ import org.koin.dsl.module
 val backendModule = module {
     single {
         Database.connect(
-            url = "jdbc:postgresql://localhost:5433/moviedb",
-            user = "postgres",
+            url = "jdbc:postgresql://${System.getenv("POSTGRES_HOST")}:${System.getenv("POSTGRES_PORT")}/" +
+                    System.getenv("POSTGRES_DB_NAME"),
+            user = System.getenv("POSTGRES_USER"),
             driver = "org.postgresql.Driver",
-            password = "postgres_pass"
+            password = System.getenv("POSTGRES_PASS")
         )
     }
     single { ViewerService(get()) }
