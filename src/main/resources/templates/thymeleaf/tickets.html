@@ -95,6 +95,8 @@
                 });
         } else {
             alert("Спочатку зареєструйтесь!")
+            const url = location.href
+            location.replace(`${url}/..`);
         }
 
         if (viewerId) {
@@ -132,6 +134,8 @@
                 });
         } else {
             alert("Спочатку зареєструйтесь!")
+            const url = location.href
+            location.replace(`${url}/..`);
         }
     };
 </script>

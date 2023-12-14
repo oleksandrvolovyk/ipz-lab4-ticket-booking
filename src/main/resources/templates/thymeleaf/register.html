@@ -27,6 +27,18 @@
     </select>
     <button type="button" onclick="saveUser()">Зберегти користувача</button>
 </form>
+
+<script>
+    window.onload = function () {
+        const viewerId = localStorage.getItem("viewerId")
+        if (viewerId) {
+            // Користувач вже реєструвався
+            const url = location.href
+            location.replace(`${url}/tickets`);
+        }
+    }
+</script>
+
 <script>
     function saveUser() {
         const name = document.getElementById("userName").value
