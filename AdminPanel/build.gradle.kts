@@ -28,6 +28,7 @@ application {
 
 dependencies {
     implementation(project(":Backend"))
+    implementation(project(":EmployeesBackend"))
 
     // Koin for Ktor
     implementation("io.insert-koin:koin-ktor:$koin_version")

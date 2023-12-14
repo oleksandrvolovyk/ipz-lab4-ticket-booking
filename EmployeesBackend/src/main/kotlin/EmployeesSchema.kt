@@ -4,46 +4,51 @@ import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates
 import com.mongodb.client.model.Updates.set
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
-import org.bson.BsonObjectId
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
-import java.util.UUID
+import java.util.*
 
+@Serializable
 data class Employee(
-    @BsonId
-    val id: ObjectId,
+    @BsonId @Transient
+    val id: ObjectId = ObjectId(),
     val fullName: String,
     val age: Int,
     val sex: String,
     val employeeId: String
 )
 
+@Serializable
 data class EmployeeDTO(
     val fullName: String,
     val age: Int,
     val sex: String
 )
 
-class EmployeeService(private val database: MongoDatabase) {
+class EmployeeService(database: MongoDatabase) {
     private val collection = database.getCollection<Employee>(collectionName = "employee")
     suspend fun create(employeeDTO: EmployeeDTO): String {
+        val employeeId = UUID.randomUUID().toString()
         val item = Employee(
-            id = ObjectId(),
             fullName = employeeDTO.fullName,
             age = employeeDTO.age,
             sex = employeeDTO.sex,
-            employeeId = UUID.randomUUID().toString()
+            employeeId = employeeId
         )
 
-        return (collection.insertOne(item).insertedId as BsonObjectId).value.toHexString()
+        collection.insertOne(item)
+
+        return employeeId
     }
 
-    suspend fun read(employeeId: String): Employee {
+    suspend fun read(employeeId: String): Employee? {
         val queryParams = eq(Employee::employeeId.name, employeeId)
 
-        return collection.find<Employee>(queryParams).limit(1).first()
+        return collection.find<Employee>(queryParams).limit(1).firstOrNull()
     }
 
     suspend fun readAll(): List<Employee> {
