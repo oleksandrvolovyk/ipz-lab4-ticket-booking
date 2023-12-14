@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css">
+    <title>Lab4</title>
+</head>
+<body>
+    <p th:each="ticket : ${tickets}">
+        <span>[[${ticket.movieTitle}]]</span>
+    </p>
+</body>
+</html>

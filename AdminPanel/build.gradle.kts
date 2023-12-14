@@ -1,9 +1,3 @@
-plugins {
-    kotlin("jvm") version "1.9.21"
-    id("io.ktor.plugin") version "2.3.6"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.21"
-}
-
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
@@ -12,14 +6,29 @@ val koin_version: String by project
 val exposed_version: String by project
 val postgresql_version: String by project
 
-group = "kpi.backend"
+plugins {
+    kotlin("jvm") version "1.9.21"
+    id("io.ktor.plugin") version "2.3.6"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.21"
+}
+
+group = "kpi.admin_panel"
 version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
 }
 
+application {
+    mainClass.set("io.ktor.server.netty.EngineMain")
+
+    val isDevelopment: Boolean = project.ext.has("development")
+    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
+}
+
 dependencies {
+    implementation(project(":Backend"))
+
     // Koin for Ktor
     implementation("io.insert-koin:koin-ktor:$koin_version")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
