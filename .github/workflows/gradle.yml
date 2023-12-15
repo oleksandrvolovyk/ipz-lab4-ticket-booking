@@ -1,0 +1,64 @@
+name: Ktor CI with Gradle
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 18
+      uses: actions/setup-java@v3
+      with:
+        java-version: '18'
+        distribution: 'temurin'
+        
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Build TicketBooking app JAR
+      run: ./gradlew :buildFatJar
+
+    - name: Build AdminPanel app JAR
+      run: ./gradlew :AdminPanel:buildFatJar
+
+    - name: Create a release
+      id: create_release
+      uses: actions/create-release@v1
+      with:
+        release_name: Release ${{ github.ref_name }}
+        tag_name: ${{ github.ref_name }}
+        body: Release ${{ github.ref_name }} body
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+    - name: Upload TicketBooking JAR
+      uses: actions/upload-release-asset@v1.0.1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: build/libs/TicketBooking-all.jar
+        asset_name: TicketBooking.jar
+        asset_content_type: application/zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+    - name: Upload AdminPanel JAR
+      uses: actions/upload-release-asset@v1.0.1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: AdminPanel/build/libs/AdminPanel-all.jar
+        asset_name: AdminPanel.jar
+        asset_content_type: application/zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
