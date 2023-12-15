@@ -5,10 +5,10 @@ import org.koin.dsl.module
 
 val employeesBackendModule = module {
     single {
-        val connectionString = "mongodb://mongo:mongo_pass@localhost:27018"
+        val connectionString = "mongodb://${System.getenv("MONGO_USER")}:${System.getenv("MONGO_PASS")}@${System.getenv("MONGO_HOST")}:${System.getenv("MONGO_PORT")}"
         val client = MongoClient.create(connectionString = connectionString)
 
-        val databaseName = "moviedb"
+        val databaseName = System.getenv("MONGO_DB_NAME")
         return@single client.getDatabase(databaseName = databaseName)
     }
     single {
