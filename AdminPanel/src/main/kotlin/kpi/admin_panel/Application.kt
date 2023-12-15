@@ -3,7 +3,7 @@ package kpi.admin_panel
 import io.ktor.server.application.*
 import kpi.backend.configureDatabases
 import kpi.admin_panel.plugins.*
-import kpi.configureEmployeesAPI
+import kpi.employees_backend.configureEmployeesAPI
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)

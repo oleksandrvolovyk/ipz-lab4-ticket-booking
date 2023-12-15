@@ -1,4 +1,4 @@
-package kpi
+package kpi.employees_backend
 
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates

@@ -1,4 +1,4 @@
-package kpi
+package kpi.employees_backend
 
 import io.ktor.http.*
 import io.ktor.server.application.*
