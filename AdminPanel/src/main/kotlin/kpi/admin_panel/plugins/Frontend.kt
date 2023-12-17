@@ -70,5 +70,23 @@ fun Application.configureFrontend() {
                 call.respond(HttpStatusCode.NotFound)
             }
         }
+
+        get("/orders/{id}") {
+            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
+
+            val orderDetails = orderService.read(orderId = id)
+
+            if (orderDetails != null) {
+                call.respond(
+                    ThymeleafContent(
+                        "order", mapOf(
+                            "order" to orderDetails
+                        )
+                    )
+                )
+            } else {
+                call.respond(HttpStatusCode.NotFound)
+            }
+        }
     }
 }

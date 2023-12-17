@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab4. AdminPanel. Замовлення. Деталі</title>
+</head>
+<body>
+
+<h2>Інформація про замовлення</h2>
+
+<p><strong>ID замовлення:</strong> <span th:text="${order.orderId}"></span></p>
+
+<!-- Viewer Information -->
+<div>
+    <h3><a th:href="@{~/viewers/{viewerId}(viewerId=${order.viewer.viewerId})}">Інформація про глядача </a></h3>
+    <p>
+        <strong>ID глядача:</strong> <span th:text="${order.viewer.viewerId}"></span><br>
+        <strong>ПІБ:</strong> <span th:text="${order.viewer.fullName}"></span><br>
+        <strong>Вік:</strong> <span th:text="${order.viewer.age}"></span><br>
+        <strong>Стать:</strong> <span th:text="${order.viewer.sex}"></span>
+    </p>
+</div>
+
+<!-- Order Tickets -->
+<div>
+    <h3>Замовлені квитки</h3>
+    <table border="1">
+        <thead>
+        <tr>
+            <th>ID квитка</th>
+            <th>Номер місця</th>
+            <th>Час</th>
+            <th>Назва фільму</th>
+            <th colspan="3">Дія</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Loop through the list of tickets -->
+        <tr th:each="ticket : ${order.tickets}">
+            <td th:text="${ticket.ticketId}"></td>
+            <td th:text="${ticket.placeNumber}"></td>
+            <td th:text="${#dates.format(new java.util.Date(ticket.time), 'dd-MM-yyyy HH:mm')}"></td>
+            <td th:text="${ticket.movieTitle}"></td>
+            <td>
+                <a th:href="@{~/tickets/{ticketId}(ticketId=${ticket.ticketId})}">
+                    <button>Переглянути деталі</button>
+                </a>
+            </td>
+            <td>
+                <a th:onclick="deleteTicket([[${ticket.ticketId}]])">
+                    <button>Видалити</button>
+                </a>
+            </td>
+            <td>
+                <a th:onclick="removeTicketFromOrder([[${ticket.orderId}]],[[${ticket.ticketId}]])">
+                    <button>Видалити з замовлення</button>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- "Go back" button -->
+<button onclick="goBack()">Go back</button>
+
+<!-- JavaScript to handle "Go back" button -->
+<script>
+    function goBack() {
+        window.history.back();
+    }
+
+    function deleteTicket(ticketId) {
+        fetch(`/api/tickets/${ticketId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                window.location.reload();
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+
+    function removeTicketFromOrder(orderId, ticketId) {
+        // Implement the logic to delete a ticket
+        // Make a fetch DELETE request to delete the ticket
+        fetch(`/api/orders/${orderId}/tickets/${ticketId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                window.location.reload();
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+</script>
+
+</body>
+</html>
