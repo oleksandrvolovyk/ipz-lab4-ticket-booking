@@ -132,6 +132,14 @@
                         orderIdCell.innerText = order.orderId;
                         orderIdCell.rowSpan = order.tickets.length + 1;
 
+                        // Add "Переглянути деталі замовлення" button
+                        const viewOrderDetailsButton = document.createElement("button");
+                        viewOrderDetailsButton.innerText = "Переглянути деталі замовлення";
+                        viewOrderDetailsButton.onclick = function () {
+                            viewOrderDetails(order.orderId);
+                        };
+                        orderIdCell.appendChild(viewOrderDetailsButton);
+
                         // Add "Видалити замовлення" button
                         const deleteOrderButton = document.createElement("button");
                         deleteOrderButton.innerText = "Видалити замовлення";
@@ -187,6 +195,11 @@
     // Function to redirect to ticket details page
     function viewTicketDetails(ticketId) {
         window.location.href = `/tickets/${ticketId}`;
+    }
+
+    // Function to redirect to ticket details page
+    function viewOrderDetails(orderId) {
+        window.location.href = `/orders/${orderId}`;
     }
 
     // Function to delete a order

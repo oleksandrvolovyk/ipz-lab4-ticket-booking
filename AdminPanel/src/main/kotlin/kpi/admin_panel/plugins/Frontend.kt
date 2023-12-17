@@ -15,6 +15,10 @@ fun Application.configureFrontend() {
     val ticketService by inject<TicketService>()
 
     routing {
+        get("/") {
+            call.respond(ThymeleafContent("index" , emptyMap()))
+        }
+
         get("/viewers") {
             call.respond(
                 ThymeleafContent(

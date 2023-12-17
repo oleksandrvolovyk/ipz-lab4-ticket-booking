@@ -6,8 +6,9 @@
     <title>Lab4</title>
 </head>
 <body>
-    <p th:each="ticket : ${tickets}">
-        <span>[[${ticket.movieTitle}]]</span>
-    </p>
+
+<h1><a th:href="@{~/viewers}">Глядачі</a></h1>
+<h1><a th:href="@{~/tickets}">Квитки</a></h1>
+
 </body>
 </html>
