@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab4. AdminPanel. Квитки. Деталі</title>
+</head>
+<body>
+
+<h2>Інформація про квитки</h2>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID квитка</th>
+        <th>Номер місця</th>
+        <th>Час</th>
+        <th>Назва фільму</th>
+        <th>ID замовлення</th>
+        <th colspan="2">Дія</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Loop through the list of tickets -->
+    <tr th:each="ticket : ${tickets}">
+        <td th:text="${ticket.ticketId}"></td>
+        <td th:text="${ticket.placeNumber}"></td>
+        <td th:text="${#dates.format(new java.util.Date(ticket.time), 'dd-MM-yyyy HH:mm')}"></td>
+        <td th:text="${ticket.movieTitle}"></td>
+        <td>
+            <a th:if="${ticket.orderId != null}" th:href="@{~/orders/{orderId}(orderId=${ticket.orderId})}">
+                <span th:text="${ticket.orderId}"></span>
+            </a>
+            <span th:if="${ticket.orderId == null}">N/A</span>
+        </td>
+        <td>
+            <a th:href="@{~/tickets/{ticketId}(ticketId=${ticket.ticketId})}">
+                <button>Переглянути деталі</button>
+            </a>
+        </td>
+        <td>
+            <a th:onclick="deleteTicket([[${ticket.ticketId}]])">
+                <button>Видалити</button>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<script>
+    // Function to delete a ticket
+    function deleteTicket(ticketId) {
+        fetch(`/api/tickets/${ticketId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                window.location.reload();
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+</script>
+
+</body>
+</html>

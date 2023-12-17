@@ -43,6 +43,16 @@ fun Application.configureFrontend() {
             }
         }
 
+        get("/tickets") {
+            call.respond(
+                ThymeleafContent(
+                    "tickets", mapOf(
+                        "tickets" to ticketService.readAll()
+                    )
+                )
+            )
+        }
+
         get("/tickets/{id}") {
             val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
 
