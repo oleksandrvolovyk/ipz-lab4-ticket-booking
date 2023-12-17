@@ -42,5 +42,23 @@ fun Application.configureFrontend() {
                 call.respond(HttpStatusCode.NotFound)
             }
         }
+
+        get("/tickets/{id}") {
+            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
+
+            val ticketDetails = ticketService.read(ticketId = id)
+
+            if (ticketDetails != null) {
+                call.respond(
+                    ThymeleafContent(
+                        "ticket", mapOf(
+                            "ticket" to ticketDetails
+                        )
+                    )
+                )
+            } else {
+                call.respond(HttpStatusCode.NotFound)
+            }
+        }
     }
 }

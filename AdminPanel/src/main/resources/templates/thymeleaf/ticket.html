@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css">
+    <title>Lab4. AdminPanel. Квиток. Деталі</title>
+</head>
+<body>
+
+<!-- Ticket Information -->
+<h2>Інформація про квиток</h2>
+<form id="ticketForm">
+    <input type="hidden" id="ticketId" th:value="${ticket.ticketId}">
+
+    <!-- Editable Fields -->
+    <div>
+        <label for="placeNumber">Номер місця:</label>
+        <input type="number" id="placeNumber" th:value="${ticket.placeNumber}">
+    </div>
+
+    <div>
+        <label for="time">Час:</label>
+        <input type="datetime-local" id="time"
+               th:value="${#dates.format(new java.util.Date(ticket.time), 'yyyy-MM-dd\'T\'HH:mm')}">
+    </div>
+
+    <div>
+        <label for="movieTitle">Назва фільму:</label>
+        <input type="text" id="movieTitle" th:value="${ticket.movieTitle}">
+    </div>
+
+    <div>
+        <label for="orderId">ID замовлення:</label>
+        <input type="number" id="orderId" th:value="${ticket.orderId}">
+    </div>
+
+    <!-- Save Button -->
+    <button type="button" onclick="saveTicket()">Save</button>
+</form>
+
+<!-- "Go back" button -->
+<button onclick="goBack()">Go back</button>
+
+<!-- JavaScript to handle form submission -->
+<script>
+    function goBack() {
+        // Use the history object to navigate back
+        window.history.back();
+    }
+
+    function saveTicket() {
+        // Create the JSON object
+        const jsonData = {
+            "placeNumber": document.getElementById('placeNumber').value,
+            "time": new Date(document.getElementById('time').value).getTime(),
+            "movieTitle": document.getElementById('movieTitle').value,
+            "orderId": document.getElementById('orderId').value
+        };
+
+        // Get the ticket ID
+        const ticketId = document.getElementById('ticketId').value;
+
+        // Make a fetch PUT request with the JSON payload
+        fetch(`/api/tickets/${ticketId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text);
+                    });
+                }
+                console.log(response);
+            })
+            .catch(error => {
+                alert(error);
+            });
+    }
+</script>
+
+</body>
+</html>

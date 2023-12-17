@@ -9,9 +9,6 @@ import io.ktor.server.routing.*
 
 fun Application.configureRouting() {
     install(StatusPages) {
-        status(HttpStatusCode.NotFound) { call, status ->
-            call.respondText(text = "404: Page Not Found", status = status)
-        }
         exception<Throwable> { call, cause ->
             call.respondText(text = "500: $cause" , status = HttpStatusCode.InternalServerError)
         }

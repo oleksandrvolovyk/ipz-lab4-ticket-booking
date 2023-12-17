@@ -42,6 +42,10 @@ class OrderService(
     private suspend fun <T> dbQuery(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
 
+    suspend fun exists(orderId: Int) = dbQuery {
+        Orders.select { Orders.order_id eq orderId }.singleOrNull() != null
+    }
+
     suspend fun create(orderDTO: OrderDTO): Int {
         val newOrderId = dbQuery {
             Orders.insert {

@@ -96,7 +96,8 @@ fun Application.configureDatabases() {
 
                 delete("/{id}/tickets/{ticketId}") {
                     val orderId = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid Order ID")
-                    val ticketId = call.parameters["ticketId"]?.toInt() ?: throw IllegalArgumentException("Invalid Ticket ID")
+                    val ticketId =
+                        call.parameters["ticketId"]?.toInt() ?: throw IllegalArgumentException("Invalid Ticket ID")
 
                     val order = orderService.read(orderId)
                     val ticket = ticketService.read(ticketId)
@@ -125,7 +126,10 @@ fun Application.configureDatabases() {
                     val timestamp = call.request.queryParameters["timestamp"]?.toLongOrNull()
                     val orderId = call.request.queryParameters["orderId"]?.toIntOrNull()
                     if (movieTitle != null && timestamp != null) {
-                        call.respond(HttpStatusCode.OK, ticketService.readAllWithMovieTitleAndTimeAndOrderId(movieTitle, timestamp, orderId))
+                        call.respond(
+                            HttpStatusCode.OK,
+                            ticketService.readAllWithMovieTitleAndTimeAndOrderId(movieTitle, timestamp, orderId)
+                        )
                     } else {
                         call.respond(HttpStatusCode.OK, ticketService.readAll())
                     }
@@ -142,8 +146,12 @@ fun Application.configureDatabases() {
                 put("/{id}") {
                     val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
                     val ticketDTO = call.receive<TicketDTO>()
-                    ticketService.update(id, ticketDTO)
-                    call.respond(HttpStatusCode.OK)
+                    if ((ticketDTO.orderId != null && orderService.exists(ticketDTO.orderId)) || ticketDTO.orderId == null) {
+                        ticketService.update(id, ticketDTO)
+                        call.respond(HttpStatusCode.OK)
+                    } else {
+                        call.respond(HttpStatusCode.NotFound, "Order with order_id ${ticketDTO.orderId} not found")
+                    }
                 }
                 delete("/{id}") {
                     val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
