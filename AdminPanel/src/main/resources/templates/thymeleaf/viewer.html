@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css">
+    <title>Lab4. AdminPanel. Глядач. Деталі</title>
+</head>
+<body>
+
+<!-- Viewer Information -->
+<div>
+    <h2>Інформація про глядача</h2>
+    <p>
+        <strong>ID:</strong> <span th:text="${viewer.viewerId}"></span><br>
+        <strong>ПІБ:</strong>
+        <input type="text" th:value="${viewer.fullName}" id="fullNameInput">
+        <br>
+        <strong>Вік:</strong>
+        <input type="number" th:value="${viewer.age}" id="ageInput">
+        <br>
+        <strong>Стать:</strong>
+        <select id="sexSelect">
+            <option value="male" th:selected="${viewer.sex == 'male'}">Male</option>
+            <option value="female" th:selected="${viewer.sex == 'female'}">Female</option>
+            <option value="other" th:selected="${viewer.sex == 'other'}">Other</option>
+        </select>
+        <button onclick="saveEdits()">Submit changes</button>
+    </p>
+</div>
+
+<!-- Viewer Orders -->
+<table id="ordersTable" border="1">
+    <thead>
+    <tr>
+        <th>Номер замовлення</th>
+        <th>Назва фільму</th>
+        <th>Час</th>
+        <th>Номер місця</th>
+        <th colspan="2">Дія</th>
+    </tr>
+    </thead>
+    <tbody id="ordersBody">
+    </tbody>
+</table>
+
+<!-- "Go back" button -->
+<button onclick="goBack()">Go back</button>
+
+<script>
+    function goBack() {
+        // Use the history object to navigate back
+        window.history.back();
+    }
+
+    function saveEdits() {
+        // Get the current URL
+        const currentUrl = window.location.href;
+
+        // Use a regular expression to extract the ID path parameter
+        const match = currentUrl.match(/\/viewers\/(\d+)/);
+
+        // Check if the match is found
+        if (!match) {
+            alert("Viewer ID not found in the URL");
+        }
+
+        const viewerId = match[1];
+
+        const fullName = document.getElementById("fullNameInput").value;
+        const age = document.getElementById("ageInput").value;
+        const sex = document.getElementById("sexSelect").value;
+
+        const jsonData = {
+            'fullName': fullName,
+            'age': age,
+            'sex': sex
+        }
+
+        fetch('/api/viewers/' + viewerId, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                console.log("Changes saved!")
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+</script>
+
+<!-- JavaScript to handle orders display -->
+<script>
+    window.onload = function () {
+        // Get the current URL
+        const currentUrl = window.location.href;
+
+        // Use a regular expression to extract the ID path parameter
+        const match = currentUrl.match(/\/viewers\/(\d+)/);
+
+        // Check if the match is found
+        if (!match) {
+            alert("Viewer ID not found in the URL");
+        }
+
+        const viewerId = match[1];
+
+        if (viewerId) {
+            // Make a fetch GET request to fetch orders
+            fetch(`/api/viewers/${viewerId}/orders`, {
+                method: 'GET'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Display orders in the table
+                    const ordersTableBody = document.getElementById("ordersBody");
+                    data.forEach(order => {
+                        const row = ordersTableBody.insertRow();
+                        const orderIdCell = row.insertCell();
+                        orderIdCell.innerText = order.orderId;
+                        orderIdCell.rowSpan = order.tickets.length + 1;
+
+                        // Loop through the list of tickets in each order
+                        order.tickets.forEach(ticket => {
+                            const ticketRow = ordersTableBody.insertRow();
+                            const movieTitleCell = ticketRow.insertCell();
+                            const timeCell = ticketRow.insertCell();
+                            const placeNumberCell = ticketRow.insertCell();
+
+                            movieTitleCell.innerText = ticket.movieTitle;
+                            timeCell.innerText = new Date(ticket.time).toLocaleString();
+                            placeNumberCell.innerText = ticket.placeNumber;
+
+                            // Add "Переглянути деталі" button
+                            const viewDetailsButton = document.createElement("button");
+                            viewDetailsButton.innerText = "Переглянути деталі";
+                            viewDetailsButton.onclick = function () {
+                                viewTicketDetails(ticket.ticketId);
+                            };
+                            ticketRow.appendChild(viewDetailsButton);
+
+                            // Add "Видалити" button
+                            const deleteButton = document.createElement("button");
+                            deleteButton.innerText = "Видалити";
+                            deleteButton.onclick = function () {
+                                deleteTicket(ticket.ticketId);
+                            };
+                            ticketRow.appendChild(deleteButton);
+                        });
+                    });
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        }
+    };
+
+    // Function to redirect to ticket details page
+    function viewTicketDetails(ticketId) {
+        window.location.href = `/tickets/${ticketId}`;
+    }
+
+    // Function to delete a ticket
+    function deleteTicket(ticketId) {
+        // Implement the logic to delete a ticket
+        // Make a fetch DELETE request to delete the ticket
+        fetch(`/api/tickets/${ticketId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                window.location.reload();
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+</script>
+
+</body>
+</html>

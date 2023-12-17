@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css">
+    <title>Lab4. AdminPanel. Глядачі</title>
+</head>
+<body>
+
+<h2>Інформація про глядачів</h2>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>ПІБ</th>
+        <th>Вік</th>
+        <th>Стать</th>
+        <th colspan="2">Дія</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Loop through the list of viewers -->
+    <tr th:each="viewer : ${viewers}">
+        <td th:text="${viewer.viewerId}"></td>
+        <td th:text="${viewer.fullName}"></td>
+        <td th:text="${viewer.age}"></td>
+        <td th:text="${viewer.sex}"></td>
+        <!-- Link to viewer's page -->
+        <td>
+            <a th:href="@{~/viewers/{viewerId}(viewerId=${viewer.viewerId})}">
+                <button>Переглянути деталі</button>
+            </a>
+        </td>
+        <td>
+            <a th:onclick="deleteViewer([[${viewer.viewerId}]])">
+                <button>Видалити</button>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<script>
+    function deleteViewer(viewerId) {
+        fetch('/api/viewers/' + viewerId, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                window.location.reload()
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+</script>
+</body>
+</html>
