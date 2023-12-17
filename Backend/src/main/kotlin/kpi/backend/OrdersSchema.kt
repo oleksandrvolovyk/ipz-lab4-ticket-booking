@@ -80,7 +80,7 @@ class OrderService(
 
     suspend fun delete(orderId: Int) {
         dbQuery {
-            ticketService.deleteAllWithOrderId(orderId)
+            ticketService.updateTicketOrderIdsByOrderId(orderId, null)
         }
 
         dbQuery {

@@ -84,9 +84,43 @@ class TicketService(database: Database) {
         }
     }
 
+    /**
+     * Function to update the order ID of a ticket by its ticket ID.
+     *
+     * This function updates the order ID of a ticket in the database where the ticket ID matches
+     * the specified [ticketId]. It sets the order ID to the provided value [orderId].
+     *
+     * @param ticketId The ticket ID of the ticket to update.
+     * @param orderId The new order ID to set for the specified ticket.
+     *
+     * @return Unit.
+     */
+    suspend fun updateTicketOrderId(ticketId: Int, orderId: Int?) = dbQuery {
+        Tickets.update({ Tickets.ticket_id eq ticketId }) {
+            it[order_id] = orderId
+        }
+    }
+
     suspend fun updateTicketOrderIds(ticketIds: List<Int>, orderId: Int) = dbQuery {
         Tickets.update({ Tickets.ticket_id inList ticketIds }) {
             it[order_id] = orderId
+        }
+    }
+
+    /**
+     * Function to update the order IDs of tickets based on their order ID.
+     *
+     * This function updates the order IDs of tickets in the database where the current order ID matches
+     * the specified [orderId]. It sets the order ID to the new value [newOrderId].
+     *
+     * @param orderId The current order ID to match tickets for updating.
+     * @param newOrderId The new order ID to set for the matched tickets.
+     *
+     * @return Unit.
+     */
+    suspend fun updateTicketOrderIdsByOrderId(orderId: Int?, newOrderId: Int?) = dbQuery {
+        Tickets.update({ Tickets.order_id eq orderId }) {
+            it[order_id] = newOrderId
         }
     }
 

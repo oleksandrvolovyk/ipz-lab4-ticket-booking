@@ -93,6 +93,25 @@ fun Application.configureDatabases() {
                     orderService.delete(id)
                     call.respond(HttpStatusCode.OK)
                 }
+
+                delete("/{id}/tickets/{ticketId}") {
+                    val orderId = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid Order ID")
+                    val ticketId = call.parameters["ticketId"]?.toInt() ?: throw IllegalArgumentException("Invalid Ticket ID")
+
+                    val order = orderService.read(orderId)
+                    val ticket = ticketService.read(ticketId)
+
+                    if (order == null) {
+                        call.respond(HttpStatusCode.NotFound, "Order not found")
+                    } else if (ticket == null) {
+                        call.respond(HttpStatusCode.NotFound, "Ticket not found")
+                    } else if (ticket.orderId != orderId) {
+                        call.respond(HttpStatusCode.BadRequest, "Ticket not in this order")
+                    } else {
+                        ticketService.updateTicketOrderId(ticketId, null)
+                        call.respond(HttpStatusCode.OK)
+                    }
+                }
             }
 
             route("/tickets") {

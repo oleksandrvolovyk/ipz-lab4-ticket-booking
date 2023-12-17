@@ -36,7 +36,7 @@
         <th>Назва фільму</th>
         <th>Час</th>
         <th>Номер місця</th>
-        <th colspan="2">Дія</th>
+        <th colspan="3">Дія</th>
     </tr>
     </thead>
     <tbody id="ordersBody">
@@ -132,6 +132,14 @@
                         orderIdCell.innerText = order.orderId;
                         orderIdCell.rowSpan = order.tickets.length + 1;
 
+                        // Add "Видалити замовлення" button
+                        const deleteOrderButton = document.createElement("button");
+                        deleteOrderButton.innerText = "Видалити замовлення";
+                        deleteOrderButton.onclick = function () {
+                            deleteOrder(order.orderId);
+                        };
+                        orderIdCell.appendChild(deleteOrderButton);
+
                         // Loop through the list of tickets in each order
                         order.tickets.forEach(ticket => {
                             const ticketRow = ordersTableBody.insertRow();
@@ -158,6 +166,14 @@
                                 deleteTicket(ticket.ticketId);
                             };
                             ticketRow.appendChild(deleteButton);
+
+                            // Add "Видалити з замовлення" button
+                            const deleteFromOrderButton = document.createElement("button");
+                            deleteFromOrderButton.innerText = "Видалити з замовлення";
+                            deleteFromOrderButton.onclick = function () {
+                                removeTicketFromOrder(order.orderId, ticket.ticketId);
+                            };
+                            ticketRow.appendChild(deleteFromOrderButton);
                         });
                     });
                 })
@@ -173,11 +189,53 @@
         window.location.href = `/tickets/${ticketId}`;
     }
 
+    // Function to delete a order
+    function deleteOrder(orderId) {
+        fetch(`/api/orders/${orderId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                window.location.reload();
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+
     // Function to delete a ticket
     function deleteTicket(ticketId) {
         // Implement the logic to delete a ticket
         // Make a fetch DELETE request to delete the ticket
         fetch(`/api/tickets/${ticketId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                window.location.reload();
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+
+    // Function to remove a ticket from order
+    function removeTicketFromOrder(orderId, ticketId) {
+        // Implement the logic to delete a ticket
+        // Make a fetch DELETE request to delete the ticket
+        fetch(`/api/orders/${orderId}/tickets/${ticketId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
