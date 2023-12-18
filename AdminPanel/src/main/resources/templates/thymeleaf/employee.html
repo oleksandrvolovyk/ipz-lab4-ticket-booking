@@ -2,32 +2,42 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/employee.css" type="text/css">
     <title>Lab4. AdminPanel. Співробітник. Деталі</title>
 </head>
 <body>
 <!-- Employee Information -->
+<!-- "Go back" button -->
+
 <div>
-    <h2>Інформація про співробітника</h2>
+    <div class="title-section">
+        <button onclick="window.history.back();">←</button>
+        <h2>Інформація про співробітника</h2>
+    </div>
+    <div class="employee-information">
+        <div>
+            <strong>ID співробітника:</strong> <span th:text="${employee.employeeId}"></span>
 
-    <!-- "Go back" button -->
-    <button onclick="window.history.back();">←</button>
+        </div>
+        <div>
+            <strong>ПІБ:</strong>
+            <input type="text" th:value="${employee.fullName}" id="fullNameInput">
+        </div>
 
-    <p>
-        <strong>ID співробітника:</strong> <span th:text="${employee.employeeId}"></span><br>
-        <strong>ПІБ:</strong>
-        <input type="text" th:value="${employee.fullName}" id="fullNameInput">
-        <br>
-        <strong>Вік:</strong>
-        <input type="number" th:value="${employee.age}" id="ageInput">
-        <br>
-        <strong>Стать:</strong>
-        <select id="sexSelect">
-            <option value="male" th:selected="${employee.sex == 'male'}">Male</option>
-            <option value="female" th:selected="${employee.sex == 'female'}">Female</option>
-            <option value="other" th:selected="${employee.sex == 'other'}">Other</option>
-        </select>
+        <div>
+            <strong>Вік:</strong>
+            <input type="number" th:value="${employee.age}" id="ageInput">
+        </div>
+        <div>
+            <strong>Стать:</strong>
+            <select id="sexSelect">
+                <option value="male" th:selected="${employee.sex == 'male'}">Male</option>
+                <option value="female" th:selected="${employee.sex == 'female'}">Female</option>
+                <option value="other" th:selected="${employee.sex == 'other'}">Other</option>
+            </select>
+        </div>
         <button onclick="saveEdits()">Зберегти зміни</button>
-    </p>
+    </div>
 </div>
 
 <script>

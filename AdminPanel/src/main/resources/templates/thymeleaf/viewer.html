@@ -2,38 +2,65 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/static/viewer.css" type="text/css">
     <title>Lab4. AdminPanel. Глядач. Деталі</title>
 </head>
 <body>
 
 <!-- Viewer Information -->
-<div>
-    <h2>Інформація про глядача</h2>
 
-    <!-- "Go back" button -->
-    <button onclick="window.history.back();">←</button>
+    <div class="title-section">
+        <!-- "Go back" button -->
+        <button onclick="window.history.back();">←</button>
+        <h2>Інформація про глядача</h2>
+    </div>
 
-    <p>
-        <strong>ID:</strong> <span th:text="${viewer.viewerId}"></span><br>
-        <strong>ПІБ:</strong>
-        <input type="text" th:value="${viewer.fullName}" id="fullNameInput">
-        <br>
-        <strong>Вік:</strong>
-        <input type="number" th:value="${viewer.age}" id="ageInput">
-        <br>
-        <strong>Стать:</strong>
-        <select id="sexSelect">
-            <option value="male" th:selected="${viewer.sex == 'male'}">Male</option>
-            <option value="female" th:selected="${viewer.sex == 'female'}">Female</option>
-            <option value="other" th:selected="${viewer.sex == 'other'}">Other</option>
-        </select>
-        <button onclick="saveEdits()">Зберегти зміни</button>
-    </p>
-</div>
+    <div class="viewer-information">
+        <div>
+            <strong>ID:</strong>
+            <span th:text="${viewer.viewerId}"></span>
+        </div>
+        <div>
+            <strong>ПІБ:</strong>
+            <input type="text" th:value="${viewer.fullName}" id="fullNameInput">
+        </div>
+
+        <div>
+            <strong>Вік:</strong>
+            <input type="number" th:value="${viewer.age}" id="ageInput">
+        </div>
+        <div>
+            <strong>Стать:</strong>
+            <select id="sexSelect">
+                <option value="male" th:selected="${viewer.sex == 'male'}">Male</option>
+                <option value="female" th:selected="${viewer.sex == 'female'}">Female</option>
+                <option value="other" th:selected="${viewer.sex == 'other'}">Other</option>
+            </select>
+        </div>
+        <button class="" onclick="saveEdits()">Зберегти зміни</button>
+
+    </div>
+
+
+<!--    <p>-->
+<!--        <strong>ID:</strong> <span th:text="${viewer.viewerId}"></span><br>-->
+<!--        <strong>ПІБ:</strong>-->
+<!--        <input type="text" th:value="${viewer.fullName}" id="fullNameInput">-->
+<!--        <br>-->
+<!--        <strong>Вік:</strong>-->
+<!--        <input type="number" th:value="${viewer.age}" id="ageInput">-->
+<!--        <br>-->
+<!--        <strong>Стать:</strong>-->
+<!--        <select id="sexSelect">-->
+<!--            <option value="male" th:selected="${viewer.sex == 'male'}">Male</option>-->
+<!--            <option value="female" th:selected="${viewer.sex == 'female'}">Female</option>-->
+<!--            <option value="other" th:selected="${viewer.sex == 'other'}">Other</option>-->
+<!--        </select>-->
+<!--        <button onclick="saveEdits()">Зберегти зміни</button>-->
+<!--    </p>-->
 
 <!-- Viewer Orders -->
-<table id="ordersTable" border="1">
+<table id="ordersTable" border="1" >
     <thead>
     <tr>
         <th>ID замовлення</th>
@@ -125,12 +152,15 @@
                     data.forEach(order => {
                         const row = ordersTableBody.insertRow();
                         const orderIdCell = row.insertCell();
+                        // додання стилів до orderIdCell
+                        orderIdCell.classList.add('table-id-and-button')
                         orderIdCell.innerText = order.orderId;
                         orderIdCell.rowSpan = order.tickets.length + 1;
 
                         // Add "Переглянути деталі замовлення" button
                         const viewOrderDetailsButton = document.createElement("button");
                         viewOrderDetailsButton.innerText = "Переглянути деталі замовлення";
+                        // додання класу стилів
                         viewOrderDetailsButton.onclick = function () {
                             viewOrderDetails(order.orderId);
                         };
@@ -158,6 +188,8 @@
                             const actionCell1 = ticketRow.insertCell();
                             // Add "Переглянути деталі" button
                             const viewDetailsButton = document.createElement("button");
+                            // додання стилів
+                            viewDetailsButton.classList.add("view-detail-button")
                             viewDetailsButton.innerText = "Переглянути деталі";
                             viewDetailsButton.onclick = function () {
                                 viewTicketDetails(ticket.ticketId);
@@ -167,6 +199,7 @@
                             const actionCell2 = ticketRow.insertCell();
                             // Add "Видалити" button
                             const deleteButton = document.createElement("button");
+                            deleteButton.classList.add("delete-button")
                             deleteButton.innerText = "Видалити";
                             deleteButton.onclick = function () {
                                 deleteTicket(ticket.ticketId);
@@ -176,6 +209,7 @@
                             const actionCell3 = ticketRow.insertCell();
                             // Add "Видалити з замовлення" button
                             const deleteFromOrderButton = document.createElement("button");
+                            deleteFromOrderButton.classList.add('remove-button')
                             deleteFromOrderButton.innerText = "Видалити з замовлення";
                             deleteFromOrderButton.onclick = function () {
                                 removeTicketFromOrder(order.orderId, ticket.ticketId);

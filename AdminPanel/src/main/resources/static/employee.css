@@ -1,0 +1,81 @@
+body{
+    background-color: #17212b;
+}
+.title-section{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: white;
+}
+
+.title-section button {
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    font-size: 26px;
+    font-weight: 700;
+    background-color: #fff;
+    transition: all 0.3s ease-in-out;
+}
+.title-section button:hover {
+    background-color: #64aed9;
+    color: #242f3d;
+}
+.employee-information{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #242f3d;
+    font-size: 24px;
+    width: 700px;
+    color: white;
+    margin: 70px auto 0;
+}
+
+.employee-information > div {
+    align-items: center;
+    display: flex;
+    gap: 15px;
+}
+
+.employee-information> div > input  {
+    width: 100%;
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    background-color: #17212b;
+    color: #cccccc;
+}
+
+select, option{
+    font-size: 20px;
+    background-color: #17212b;
+    color: #cccccc;
+
+}
+.employee-information > button{
+    font-size: 24px;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #242f3d;
+    border-radius: 5px;
+    box-sizing: border-box;
+    background-color: #35465a;
+    color: #64aed9;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+.employee-information button:hover {
+    background-color: #64aed9;
+    color: #242f3d;
+    transform: translateY(2px);
+}

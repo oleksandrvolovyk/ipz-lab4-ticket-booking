@@ -1,0 +1,125 @@
+body{
+    background-color: #17212b;
+}
+.title-section{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: white;
+}
+
+.title-section button {
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    font-size: 26px;
+    font-weight: 700;
+    background-color: #fff;
+    transition: all 0.3s ease-in-out;
+}
+.title-section button:hover {
+    background-color: #64aed9;
+    color: #242f3d;
+}
+
+
+table{
+    margin: 70px auto 0;
+}
+
+th, td{
+    padding: 10px;
+    font-size: 24px;
+    color: white;
+    background-color: #242f3d;
+}
+td{
+    font-size: 20px;
+}
+button{
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 5px 10px;
+    border: none;
+    font-size: 18px;
+    transition: all ease-in-out 0.3s;
+
+}
+button:hover{
+    transform: translateY(2px);
+}
+.view-detail-button{
+    background-color: #ecd22c;
+}
+.delete-button{
+    background-color: #ce4343;
+}
+a{cursor: pointer}
+
+h3{
+    color: white;
+    text-align: center;
+    font-size: 30px;
+    margin-top: 70px;
+}
+
+
+form{
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #242f3d;
+    gap:10px;
+    color: white;
+    font-size: 24px;
+    margin: 0 auto;
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+form > div{
+    color: #fff;
+    display: flex;
+    gap: 15px;
+    flex-direction: column;
+}
+input {
+    font-size: 20px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    background-color: #17212b;
+    color: #cccccc;
+}
+
+form > button{
+    font-size: 24px;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #242f3d;
+    border-radius: 5px;
+    box-sizing: border-box;
+    background-color: #35465a;
+    color: #64aed9;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+    background-color: #64aed9;
+    color: #242f3d;
+    transform: translateY(2px);
+}
+select, option{
+    font-size: 20px;
+    background-color: #17212b;
+    color: #cccccc;
+
+}

@@ -2,30 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/order.css" type="text/css">
     <title>Lab4. AdminPanel. Замовлення. Деталі</title>
 </head>
 <body>
 
-<h2>Інформація про замовлення</h2>
+<div class="title-section">
+    <!-- "Go back" button -->
+    <button onclick="window.history.back();">←</button>
+    <h2>Інформація про замовлення</h2>
+</div>
 
-<!-- "Go back" button -->
-<button onclick="window.history.back();">←</button>
 
-<p><strong>ID замовлення:</strong> <span th:text="${order.orderId}"></span></p>
+<h1 class="order-id"><strong>ID замовлення:</strong> <span th:text="${order.orderId}"></span></h1>
 
 <!-- Viewer Information -->
-<div>
-    <h3><a th:href="@{~/viewers/{viewerId}(viewerId=${order.viewer.viewerId})}">Інформація про глядача </a></h3>
-    <p>
-        <strong>ID глядача:</strong> <span th:text="${order.viewer.viewerId}"></span><br>
-        <strong>ПІБ:</strong> <span th:text="${order.viewer.fullName}"></span><br>
-        <strong>Вік:</strong> <span th:text="${order.viewer.age}"></span><br>
-        <strong>Стать:</strong> <span th:text="${order.viewer.sex}"></span>
-    </p>
+<div class="information">
+    <a th:href="@{~/viewers/{viewerId}(viewerId=${order.viewer.viewerId})}">Інформація про глядача </a>
+    <div>
+        <div>
+            <strong>ID глядача:</strong> <span th:text="${order.viewer.viewerId}"></span>
+        </div>
+        <div>
+            <strong>ПІБ:</strong> <span th:text="${order.viewer.fullName}"></span>
+        </div>
+        <div>
+            <strong>Вік:</strong> <span th:text="${order.viewer.age}"></span>
+        </div>
+        <div>
+            <strong>Стать:</strong> <span th:text="${order.viewer.sex}"></span>
+        </div>
+    </div>
 </div>
 
 <!-- Order Tickets -->
-<div>
+<div class="order-tickets-block">
     <h3>Замовлені квитки</h3>
     <table border="1">
         <thead>
@@ -46,17 +57,17 @@
             <td th:text="${ticket.movieTitle}"></td>
             <td>
                 <a th:href="@{~/tickets/{ticketId}(ticketId=${ticket.ticketId})}">
-                    <button>Переглянути деталі</button>
+                    <button class="view-detail-button">Переглянути деталі</button>
                 </a>
             </td>
             <td>
                 <a th:onclick="deleteTicket([[${ticket.ticketId}]])">
-                    <button>Видалити</button>
+                    <button class="delete-button">Видалити</button>
                 </a>
             </td>
             <td>
                 <a th:onclick="removeTicketFromOrder([[${ticket.orderId}]],[[${ticket.ticketId}]])">
-                    <button>Видалити з замовлення</button>
+                    <button class="remove-button">Видалити з замовлення</button>
                 </a>
             </td>
         </tr>

@@ -2,14 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/employees.css" type="text/css">
     <title>Lab4. AdminPanel. Співробітники</title>
 </head>
 <body>
+<div class="title-section">
+    <!-- "Go back" button -->
+    <button onclick="window.history.back();">←</button>
+    <h2>Інформація про співробітників</h2>
+</div>
 
-<h2>Інформація про співробітників</h2>
 
-<!-- "Go back" button -->
-<button onclick="window.history.back();">←</button>
 
 <table border="1">
     <thead>
@@ -31,12 +34,12 @@
         <!-- Link to employee's page -->
         <td>
             <a th:href="@{~/employees/{employeeId}(employeeId=${employee.employeeId})}">
-                <button>Переглянути деталі</button>
+                <button class="view-detail-button">Переглянути деталі</button>
             </a>
         </td>
         <td>
             <a th:onclick="deleteEmployee([[${employee.employeeId}]])">
-                <button>Видалити</button>
+                <button class="delete-button">Видалити</button>
             </a>
         </td>
     </tr>
@@ -47,18 +50,24 @@
 
 <!-- New Employee Form -->
 <form id="newEmployeeForm">
-    <label for="fullName">ПІБ:</label>
-    <input type="text" id="fullName" name="fullName" required><br>
+    <div>
+        <label for="fullName">ПІБ:</label>
+        <input type="text" id="fullName" name="fullName" required>
+    </div>
 
-    <label for="age">Вік:</label>
-    <input type="number" id="age" name="age" required><br>
+    <div>
+        <label for="age">Вік:</label>
+        <input type="number" id="age" name="age" required>
+    </div>
 
-    <label for="sex">Стать:</label>
-    <select id="sex" name="sex" required>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-        <option value="other">Other</option>
-    </select><br>
+    <div>
+        <label for="sex">Стать:</label>
+        <select id="sex" name="sex" required>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+        </select>
+    </div>
 
     <button type="button" onclick="submitNewEmployee()">Створити співробітника</button>
 </form>

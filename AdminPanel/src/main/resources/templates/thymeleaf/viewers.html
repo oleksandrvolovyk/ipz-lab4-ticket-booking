@@ -2,15 +2,18 @@
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/static/viewers.css" type="text/css">
     <title>Lab4. AdminPanel. Глядачі</title>
 </head>
 <body>
 
-<h2>Інформація про глядачів</h2>
+<div class="title-section">
+    <!-- "Go back" button -->
+    <button onclick="window.history.back();">←</button>
+    <h2>Інформація про глядачів</h2>
+</div>
 
-<!-- "Go back" button -->
-<button onclick="window.history.back();">←</button>
+
 
 <table border="1">
     <thead>
@@ -32,12 +35,12 @@
         <!-- Link to viewer's page -->
         <td>
             <a th:href="@{~/viewers/{viewerId}(viewerId=${viewer.viewerId})}">
-                <button>Переглянути деталі</button>
+                <button class="view-detail-button">Переглянути деталі</button>
             </a>
         </td>
         <td>
             <a th:onclick="deleteViewer([[${viewer.viewerId}]])">
-                <button>Видалити</button>
+                <button class="delete-button">Видалити</button>
             </a>
         </td>
     </tr>

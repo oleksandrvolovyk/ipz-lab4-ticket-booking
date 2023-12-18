@@ -2,16 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/static/ticket.css" type="text/css">
     <title>Lab4. AdminPanel. Квиток. Деталі</title>
 </head>
 <body>
 
-<!-- Ticket Information -->
-<h2>Інформація про квиток</h2>
+<div class="title-section">
+    <!-- "Go back" button -->
+    <button onclick="window.history.back();">←</button>
+    <!-- Ticket Information -->
+    <h2>Інформація про квиток</h2>
+</div>
 
-<!-- "Go back" button -->
-<button onclick="window.history.back();">←</button>
+
 
 <form id="ticketForm">
     <input type="hidden" id="ticketId" th:value="${ticket.ticketId}">
@@ -42,15 +45,11 @@
     <button type="button" onclick="saveTicket()">Save</button>
 </form>
 
-<!-- "Go back" button -->
-<button onclick="goBack()">Go back</button>
+
 
 <!-- JavaScript to handle form submission -->
 <script>
-    function goBack() {
-        // Use the history object to navigate back
-        window.history.back();
-    }
+
 
     function saveTicket() {
         // Create the JSON object

@@ -2,24 +2,35 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/new-tickets.css" type="text/css">
     <title>Lab4. AdminPanel. Додавання квитків</title>
 </head>
 <body>
 
-<h1>Додавання квитків</h1>
+<div class="title-section">
+    <!-- "Go back" button -->
+    <button onclick="window.history.back();">←</button>
+    <h1>Додавання квитків</h1>
+</div>
 
-<!-- "Go back" button -->
-<button onclick="window.history.back();">←</button>
+
 
 <form id="bulkTicketForm">
-    <label for="maxPlaces">Кількість місць:</label>
-    <input type="number" id="maxPlaces" name="maxPlaces" required><br>
+    <div>
+        <label for="maxPlaces">Кількість місць:</label>
+        <input type="number" id="maxPlaces" name="maxPlaces" required><br>
+    </div>
 
-    <label for="movieName">Назва фільму:</label>
-    <input type="text" id="movieName" name="movieName" required><br>
+    <div>
+        <label for="movieName">Назва фільму:</label>
+        <input type="text" id="movieName" name="movieName" required><br>
+    </div>
 
-    <label for="movieTime">Час:</label>
-    <input type="datetime-local" id="movieTime" name="movieTime" required><br>
+    <div>
+        <label for="movieTime">Час:</label>
+        <input type="datetime-local" id="movieTime" name="movieTime" required><br>
+    </div>
+
 
     <div id="ticketDataContainer"></div>
 

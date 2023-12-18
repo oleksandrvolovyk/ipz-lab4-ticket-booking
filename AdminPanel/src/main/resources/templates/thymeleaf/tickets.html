@@ -2,14 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/tickets.css" type="text/css">
     <title>Lab4. AdminPanel. Квитки. Деталі</title>
 </head>
 <body>
 
-<h2>Інформація про квитки</h2>
 
-<!-- "Go back" button -->
-<button onclick="window.history.back();">←</button>
+<div class="title-section">
+    <!-- "Go back" button -->
+    <button onclick="window.history.back();">←</button>
+    <h2>Інформація про квитки</h2>
+</div>
 
 <table border="1">
     <thead>
@@ -30,19 +33,19 @@
         <td th:text="${#dates.format(new java.util.Date(ticket.time), 'dd-MM-yyyy HH:mm')}"></td>
         <td th:text="${ticket.movieTitle}"></td>
         <td>
-            <a th:if="${ticket.orderId != null}" th:href="@{~/orders/{orderId}(orderId=${ticket.orderId})}">
+            <a class="order" th:if="${ticket.orderId != null}" th:href="@{~/orders/{orderId}(orderId=${ticket.orderId})}">
                 <span th:text="${ticket.orderId}"></span>
             </a>
             <span th:if="${ticket.orderId == null}">N/A</span>
         </td>
-        <td>
+        <td >
             <a th:href="@{~/tickets/{ticketId}(ticketId=${ticket.ticketId})}">
-                <button>Переглянути деталі</button>
+                <button class="view-detail-button">Переглянути деталі</button>
             </a>
         </td>
-        <td>
+        <td >
             <a th:onclick="deleteTicket([[${ticket.ticketId}]])">
-                <button>Видалити</button>
+                <button class="delete-button">Видалити</button>
             </a>
         </td>
     </tr>
