@@ -1,0 +1,21 @@
+button{
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 5px 10px;
+    border: none;
+    font-size: 18px;
+    transition: all ease-in-out 0.3s;
+
+}
+button:hover{
+    transform: translateY(2px);
+}
+.view-detail-button{
+    background-color: #ecd22c;
+}
+.delete-button{
+    background-color: #ce4343;
+}
+.remove-button{
+    background-color: #ff8724;
+}

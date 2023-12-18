@@ -1,0 +1,28 @@
+body{
+    background-color: #17212b;
+}
+.title-section{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: white;
+}
+
+.title-section button {
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    font-size: 26px;
+    font-weight: 700;
+    background-color: #fff;
+    transition: all 0.3s ease-in-out;
+}
+.title-section button:hover {
+    background-color: #64aed9;
+    color: #242f3d;
+}
