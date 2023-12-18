@@ -5,7 +5,6 @@ import io.ktor.server.application.*
 import io.ktor.server.plugins.*
 import io.ktor.server.plugins.doublereceive.*
 import io.ktor.server.request.*
-import io.ktor.server.request.ContentTransformationException
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
@@ -126,12 +125,18 @@ fun Application.configureDatabases() {
                         val ticketDTO = call.receive<TicketDTO>()
                         val id = ticketService.create(ticketDTO)
                         call.respond(HttpStatusCode.Created, id)
-                    } catch (_: BadRequestException) { }
+                    } catch (_: BadRequestException) {
+                    }
                     try {
                         val ticketDTOs = call.receive<List<TicketDTO>>()
                         val ids = ticketService.batchCreate(ticketDTOs)
                         call.respond(HttpStatusCode.Created, ids)
-                    } catch (_: BadRequestException) { }
+                    } catch (_: BadRequestException) {
+                    }
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        "Failed to parse request body to TicketDTO or List<TicketDTO>"
+                    )
                 }
                 get {
                     val movieTitle = call.request.queryParameters["movieTitle"]
