@@ -159,29 +159,32 @@
                             timeCell.innerText = new Date(ticket.time).toLocaleString();
                             placeNumberCell.innerText = ticket.placeNumber;
 
+                            const actionCell1 = ticketRow.insertCell();
                             // Add "Переглянути деталі" button
                             const viewDetailsButton = document.createElement("button");
                             viewDetailsButton.innerText = "Переглянути деталі";
                             viewDetailsButton.onclick = function () {
                                 viewTicketDetails(ticket.ticketId);
                             };
-                            ticketRow.appendChild(viewDetailsButton);
+                            actionCell1.appendChild(viewDetailsButton);
 
+                            const actionCell2 = ticketRow.insertCell();
                             // Add "Видалити" button
                             const deleteButton = document.createElement("button");
                             deleteButton.innerText = "Видалити";
                             deleteButton.onclick = function () {
                                 deleteTicket(ticket.ticketId);
                             };
-                            ticketRow.appendChild(deleteButton);
+                            actionCell2.appendChild(deleteButton);
 
+                            const actionCell3 = ticketRow.insertCell();
                             // Add "Видалити з замовлення" button
                             const deleteFromOrderButton = document.createElement("button");
                             deleteFromOrderButton.innerText = "Видалити з замовлення";
                             deleteFromOrderButton.onclick = function () {
                                 removeTicketFromOrder(order.orderId, ticket.ticketId);
                             };
-                            ticketRow.appendChild(deleteFromOrderButton);
+                            actionCell3.appendChild(deleteFromOrderButton);
                         });
                     });
                 })
