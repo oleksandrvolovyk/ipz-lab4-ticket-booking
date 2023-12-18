@@ -8,6 +8,9 @@
 
 <h2>Інформація про замовлення</h2>
 
+<!-- "Go back" button -->
+<button onclick="window.history.back();">←</button>
+
 <p><strong>ID замовлення:</strong> <span th:text="${order.orderId}"></span></p>
 
 <!-- Viewer Information -->
@@ -60,9 +63,6 @@
         </tbody>
     </table>
 </div>
-
-<!-- "Go back" button -->
-<button onclick="goBack()">Go back</button>
 
 <!-- JavaScript to handle "Go back" button -->
 <script>

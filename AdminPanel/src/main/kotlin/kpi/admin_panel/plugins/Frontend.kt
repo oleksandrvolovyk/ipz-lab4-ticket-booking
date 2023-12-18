@@ -19,6 +19,10 @@ fun Application.configureFrontend() {
             call.respond(ThymeleafContent("index" , emptyMap()))
         }
 
+        get("/new-tickets") {
+            call.respond(ThymeleafContent("new-tickets" , emptyMap()))
+        }
+
         get("/viewers") {
             call.respond(
                 ThymeleafContent(

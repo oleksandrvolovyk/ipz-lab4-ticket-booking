@@ -24,6 +24,9 @@ dependencies {
     implementation("io.insert-koin:koin-ktor:$koin_version")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
 
+    // Double receive plugin
+    implementation("io.ktor:ktor-server-double-receive:$ktor_version")
+
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
     implementation("io.ktor:ktor-server-content-negotiation-jvm")

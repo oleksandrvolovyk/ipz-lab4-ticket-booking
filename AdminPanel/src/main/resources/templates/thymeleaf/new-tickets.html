@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab4. AdminPanel. Додавання квитків</title>
+</head>
+<body>
+
+<h1>Додавання квитків</h1>
+
+<!-- "Go back" button -->
+<button onclick="window.history.back();">←</button>
+
+<form id="bulkTicketForm">
+    <label for="maxPlaces">Кількість місць:</label>
+    <input type="number" id="maxPlaces" name="maxPlaces" required><br>
+
+    <label for="movieName">Назва фільму:</label>
+    <input type="text" id="movieName" name="movieName" required><br>
+
+    <label for="movieTime">Час:</label>
+    <input type="datetime-local" id="movieTime" name="movieTime" required><br>
+
+    <div id="ticketDataContainer"></div>
+
+    <button type="button" onclick="submitForm()">Додати</button>
+</form>
+
+<script>
+    function submitForm() {
+        const maxPlaces = parseInt(document.getElementById('maxPlaces').value);
+        const movieName = document.getElementById('movieName').value;
+        const movieTime = new Date(document.getElementById('movieTime').value).getTime();
+
+        if (isNaN(maxPlaces) || maxPlaces <= 0 || !movieName || isNaN(movieTime)) {
+            alert('Invalid input. Please fill in all fields with valid values.');
+            return;
+        }
+
+        const ticketDataContainer = document.getElementById('ticketDataContainer');
+        ticketDataContainer.innerHTML = '';
+
+        const ticketArray = [];
+
+        for (let placeNumber = 1; placeNumber <= maxPlaces; placeNumber++) {
+            const ticketData = document.createElement('input');
+            ticketData.type = 'hidden';
+            ticketData.name = 'tickets';
+            ticketData.value = JSON.stringify({
+                placeNumber: placeNumber,
+                time: movieTime,
+                movieTitle: movieName
+            });
+
+            ticketDataContainer.appendChild(ticketData);
+
+            ticketArray.push({
+                placeNumber: placeNumber,
+                time: movieTime,
+                movieTitle: movieName
+            });
+        }
+
+        fetch('/api/tickets', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(ticketArray)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                // Handle success if needed
+                alert('Bulk ticket creation successful!');
+                document.getElementById('bulkTicketForm').reset();
+                document.getElementById('ticketDataContainer').innerHTML = '';
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+</script>
+
+</body>
+</html>

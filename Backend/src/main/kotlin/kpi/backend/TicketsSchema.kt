@@ -2,6 +2,11 @@ package kpi.backend
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.Serializable
+import kpi.backend.TicketService.Tickets.movie_title
+import kpi.backend.TicketService.Tickets.order_id
+import kpi.backend.TicketService.Tickets.place_number
+import kpi.backend.TicketService.Tickets.ticket_id
+import kpi.backend.TicketService.Tickets.time
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
@@ -51,7 +56,16 @@ class TicketService(database: Database) {
             it[time] = ticketDTO.time
             it[movie_title] = ticketDTO.movieTitle
             it[order_id] = ticketDTO.orderId
-        }[Tickets.ticket_id]
+        }[ticket_id]
+    }
+
+    suspend fun batchCreate(ticketDTOs: List<TicketDTO>) = dbQuery {
+        Tickets.batchInsert(ticketDTOs) { ticketDTO ->
+            this[place_number] = ticketDTO.placeNumber
+            this[time] = ticketDTO.time
+            this[movie_title] = ticketDTO.movieTitle
+            this[order_id] = ticketDTO.orderId
+        }.map { it[ticket_id] }
     }
 
     suspend fun readAll(): List<Ticket> = dbQuery {
@@ -60,23 +74,23 @@ class TicketService(database: Database) {
     }
 
     suspend fun readAllWithMovieTitleAndTimeAndOrderId(movieTitle: String, time: Long, orderId: Int?) = dbQuery {
-        Tickets.select { (Tickets.movie_title eq movieTitle) and (Tickets.time eq time) and (Tickets.order_id eq orderId) }
+        Tickets.select { (movie_title eq movieTitle) and (Tickets.time eq time) and (order_id eq orderId) }
             .map { it.toTicket() }
     }
 
     suspend fun readAllWithOrderId(orderId: Int?): List<Ticket> = dbQuery {
-        Tickets.select { Tickets.order_id eq orderId }
+        Tickets.select { order_id eq orderId }
             .map { it.toTicket() }
     }
 
     suspend fun read(ticketId: Int): Ticket? = dbQuery {
-        Tickets.select { Tickets.ticket_id eq ticketId }
+        Tickets.select { ticket_id eq ticketId }
             .map { it.toTicket() }
             .singleOrNull()
     }
 
     suspend fun update(ticketId: Int, ticketDTO: TicketDTO) = dbQuery {
-        Tickets.update({ Tickets.ticket_id eq ticketId }) {
+        Tickets.update({ ticket_id eq ticketId }) {
             it[place_number] = ticketDTO.placeNumber
             it[time] = ticketDTO.time
             it[movie_title] = ticketDTO.movieTitle
@@ -96,13 +110,13 @@ class TicketService(database: Database) {
      * @return Unit.
      */
     suspend fun updateTicketOrderId(ticketId: Int, orderId: Int?) = dbQuery {
-        Tickets.update({ Tickets.ticket_id eq ticketId }) {
+        Tickets.update({ ticket_id eq ticketId }) {
             it[order_id] = orderId
         }
     }
 
     suspend fun updateTicketOrderIds(ticketIds: List<Int>, orderId: Int) = dbQuery {
-        Tickets.update({ Tickets.ticket_id inList ticketIds }) {
+        Tickets.update({ ticket_id inList ticketIds }) {
             it[order_id] = orderId
         }
     }
@@ -119,7 +133,7 @@ class TicketService(database: Database) {
      * @return Unit.
      */
     suspend fun updateTicketOrderIdsByOrderId(orderId: Int?, newOrderId: Int?) = dbQuery {
-        Tickets.update({ Tickets.order_id eq orderId }) {
+        Tickets.update({ order_id eq orderId }) {
             it[order_id] = newOrderId
         }
     }
@@ -137,10 +151,10 @@ class TicketService(database: Database) {
     }
 
     private fun ResultRow.toTicket() = Ticket(
-        ticketId = this[Tickets.ticket_id],
-        placeNumber = this[Tickets.place_number],
-        time = this[Tickets.time],
-        movieTitle = this[Tickets.movie_title],
-        orderId = this[Tickets.order_id]
+        ticketId = this[ticket_id],
+        placeNumber = this[place_number],
+        time = this[time],
+        movieTitle = this[movie_title],
+        orderId = this[order_id]
     )
 }

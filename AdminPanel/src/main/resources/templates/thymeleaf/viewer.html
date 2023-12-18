@@ -10,6 +10,10 @@
 <!-- Viewer Information -->
 <div>
     <h2>Інформація про глядача</h2>
+
+    <!-- "Go back" button -->
+    <button onclick="window.history.back();">←</button>
+
     <p>
         <strong>ID:</strong> <span th:text="${viewer.viewerId}"></span><br>
         <strong>ПІБ:</strong>
@@ -24,7 +28,7 @@
             <option value="female" th:selected="${viewer.sex == 'female'}">Female</option>
             <option value="other" th:selected="${viewer.sex == 'other'}">Other</option>
         </select>
-        <button onclick="saveEdits()">Submit changes</button>
+        <button onclick="saveEdits()">Зберегти зміни</button>
     </p>
 </div>
 
@@ -42,9 +46,6 @@
     <tbody id="ordersBody">
     </tbody>
 </table>
-
-<!-- "Go back" button -->
-<button onclick="goBack()">Go back</button>
 
 <script>
     function goBack() {
