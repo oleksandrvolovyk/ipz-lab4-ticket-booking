@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab4. AdminPanel. Співробітник. Деталі</title>
+</head>
+<body>
+<!-- Employee Information -->
+<div>
+    <h2>Інформація про співробітника</h2>
+
+    <!-- "Go back" button -->
+    <button onclick="window.history.back();">←</button>
+
+    <p>
+        <strong>ID співробітника:</strong> <span th:text="${employee.employeeId}"></span><br>
+        <strong>ПІБ:</strong>
+        <input type="text" th:value="${employee.fullName}" id="fullNameInput">
+        <br>
+        <strong>Вік:</strong>
+        <input type="number" th:value="${employee.age}" id="ageInput">
+        <br>
+        <strong>Стать:</strong>
+        <select id="sexSelect">
+            <option value="male" th:selected="${employee.sex == 'male'}">Male</option>
+            <option value="female" th:selected="${employee.sex == 'female'}">Female</option>
+            <option value="other" th:selected="${employee.sex == 'other'}">Other</option>
+        </select>
+        <button onclick="saveEdits()">Зберегти зміни</button>
+    </p>
+</div>
+
+<script>
+    function saveEdits() {
+        // Get the current URL
+        const currentUrl = window.location.href;
+
+        // Use a regular expression to extract the ID path parameter
+        const match = currentUrl.match(/\/employees\/([^/]+)/);
+
+        // Check if the match is found
+        if (!match) {
+            alert("Employee ID not found in the URL");
+        }
+
+        const employeeId = match[1];
+
+        const fullName = document.getElementById("fullNameInput").value;
+        const age = document.getElementById("ageInput").value;
+        const sex = document.getElementById("sexSelect").value;
+
+        const jsonData = {
+            'fullName': fullName,
+            'age': age,
+            'sex': sex
+        }
+
+        fetch('/api/employees/' + employeeId, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                console.log("Changes saved!")
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+</script>
+</body>
+</html>

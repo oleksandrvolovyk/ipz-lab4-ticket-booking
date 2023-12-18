@@ -6,6 +6,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.thymeleaf.*
 import kpi.backend.*
+import kpi.employees_backend.EmployeeService
 import org.koin.ktor.ext.inject
 
 fun Application.configureFrontend() {
@@ -13,6 +14,7 @@ fun Application.configureFrontend() {
     val viewerService by inject<ViewerService>()
     val orderService by inject<OrderService>()
     val ticketService by inject<TicketService>()
+    val employeeService by inject<EmployeeService>()
 
     routing {
         get("/") {
@@ -89,6 +91,34 @@ fun Application.configureFrontend() {
                     ThymeleafContent(
                         "order", mapOf(
                             "order" to orderDetails
+                        )
+                    )
+                )
+            } else {
+                call.respond(HttpStatusCode.NotFound)
+            }
+        }
+
+        get("/employees") {
+            call.respond(
+                ThymeleafContent(
+                    "employees", mapOf(
+                        "employees" to employeeService.readAll()
+                    )
+                )
+            )
+        }
+
+        get("/employees/{id}") {
+            val id = call.parameters["id"] ?: throw IllegalArgumentException("Invalid ID")
+
+            val employeeDetails = employeeService.read(employeeId = id)
+
+            if (employeeDetails != null) {
+                call.respond(
+                    ThymeleafContent(
+                        "employee", mapOf(
+                            "employee" to employeeDetails
                         )
                     )
                 )
