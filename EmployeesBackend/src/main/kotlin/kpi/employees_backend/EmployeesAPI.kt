@@ -15,7 +15,17 @@ fun Application.configureEmployeesAPI() {
         route("/api") {
             route("/employees") {
                 get {
-                    call.respond(HttpStatusCode.OK, employeeService.readAll())
+                    val fromAge = call.request.queryParameters["from_age"]?.toIntOrNull()
+                    val toAge = call.request.queryParameters["to_age"]?.toIntOrNull()
+
+                    if (fromAge != null && toAge != null) {
+                        if (fromAge > toAge) {
+                            call.respond(HttpStatusCode.BadRequest, "from_age > to_age")
+                        }
+                        call.respond(HttpStatusCode.OK, employeeService.readAllInAgeRange(fromAge, toAge))
+                    } else {
+                        call.respond(HttpStatusCode.OK, employeeService.readAll())
+                    }
                 }
 
                 get("/{id}") {

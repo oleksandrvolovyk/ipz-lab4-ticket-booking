@@ -1,6 +1,6 @@
 package kpi.employees_backend
 
-import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.model.Filters.*
 import com.mongodb.client.model.Updates
 import com.mongodb.client.model.Updates.set
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
@@ -53,6 +53,15 @@ class EmployeeService(database: MongoDatabase) {
 
     suspend fun readAll(): List<Employee> {
         return collection.find<Employee>().toList()
+    }
+
+    suspend fun readAllInAgeRange(from: Int, to: Int): List<Employee> {
+        val queryParams = and(
+            gte(Employee::age.name, from),
+            lte(Employee::age.name, to)
+        )
+
+        return collection.find<Employee>(queryParams).toList()
     }
 
     suspend fun update(employeeId: String, employeeDTO: EmployeeDTO) {

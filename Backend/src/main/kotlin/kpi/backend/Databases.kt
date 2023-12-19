@@ -142,10 +142,22 @@ fun Application.configureDatabases() {
                     val movieTitle = call.request.queryParameters["movieTitle"]
                     val timestamp = call.request.queryParameters["timestamp"]?.toLongOrNull()
                     val orderId = call.request.queryParameters["orderId"]?.toIntOrNull()
+
+                    val fromTime = call.request.queryParameters["from"]?.toLongOrNull()
+                    val toTime = call.request.queryParameters["to"]?.toLongOrNull()
+
                     if (movieTitle != null && timestamp != null) {
                         call.respond(
                             HttpStatusCode.OK,
                             ticketService.readAllWithMovieTitleAndTimeAndOrderId(movieTitle, timestamp, orderId)
+                        )
+                    } else if (fromTime != null && toTime != null) {
+                        if (fromTime > toTime) {
+                            call.respond(HttpStatusCode.BadRequest, "from > to")
+                        }
+                        call.respond(
+                            HttpStatusCode.OK,
+                            ticketService.readAllInTimeRange(fromTime, toTime)
                         )
                     } else {
                         call.respond(HttpStatusCode.OK, ticketService.readAll())
