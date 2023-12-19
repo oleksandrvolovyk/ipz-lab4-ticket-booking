@@ -81,6 +81,12 @@
             })
                 .then(response => {
                     if (!response.ok) {
+                        if (response.status === 404) {
+                            alert("Глядача з id " + viewerId + " не знайдено!")
+                            localStorage.removeItem("viewerId")
+                            const url = location.href
+                            location.replace(`${url}/..`);
+                        }
                         throw new Error('Network response was not ok');
                     }
                     return response.json();
