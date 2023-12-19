@@ -52,11 +52,16 @@
 <script>
     function saveTicket() {
         // Create the JSON object
+        const placeNumber = document.getElementById('placeNumber').value
+        const time = new Date(document.getElementById('time').value).getTime()
+        const movieTitle = document.getElementById('movieTitle').value
+        const orderId = document.getElementById('orderId').value
+
         const jsonData = {
-            "placeNumber": document.getElementById('placeNumber').value,
-            "time": new Date(document.getElementById('time').value).getTime(),
-            "movieTitle": document.getElementById('movieTitle').value,
-            "orderId": document.getElementById('orderId').value
+            "placeNumber": placeNumber,
+            "time": time,
+            "movieTitle": movieTitle,
+            "orderId": orderId ? orderId : null
         };
 
         // Get the ticket ID
