@@ -27,7 +27,7 @@
         <label for="toTime">До:</label>
         <input type="datetime-local" id="toTime" name="toTime">
     </div>
-    <button onclick="filterTicketsByTime()">Фільтрувати за часом</button>
+    <button type="button" onclick="filterTicketsByTime()">Фільтрувати за часом</button>
 </form>
 <table border="1">
     <thead>
@@ -76,8 +76,10 @@
         if(fromTime > toTime){
             alert('Початковий час більший за кінцевий')
         }else {
-            const url = location.href
-            location.replace(`${url}?fromTime=${fromTime}&toTime=${toTime}`);
+            const url = new URL(location.href)
+            url.searchParams.set("fromTime", fromTime.toString())
+            url.searchParams.set("toTime", toTime.toString())
+            location.replace(url);
         }
     }
 

@@ -96,8 +96,10 @@
         if(fromAge > toAge){
             alert('Початковий вік більший за кінцевий')
         } else {
-            const url = location.href
-            location.replace(`${url}?fromAge=${fromAge}&toAge=${toAge}`);
+            const url = new URL(location.href)
+            url.searchParams.set("fromAge", fromAge.toString())
+            url.searchParams.set("toAge", toAge.toString())
+            location.replace(url);
         }
     }
     function deleteEmployee(employeeId) {
