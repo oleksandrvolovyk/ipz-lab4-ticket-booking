@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="/static/titleSection.css" type="text/css">
     <link rel="stylesheet" href="/static/tableConfiguration.css" type="text/css">
     <link rel="stylesheet" href="/static/buttonConfiguration.css" type="text/css">
+    <link rel="stylesheet" href="/static/formConfiguration.css" type="text/css">
     <title>Lab4. AdminPanel. Квитки. Деталі</title>
 </head>
 <body>
@@ -17,6 +18,17 @@
     <h2>Інформація про квитки</h2>
 </div>
 
+<form>
+    <div>
+        <label for="fromTime">Від:</label>
+        <input type="datetime-local" id="fromTime" name="fromTime">
+    </div>
+    <div>
+        <label for="toTime">До:</label>
+        <input type="datetime-local" id="toTime" name="toTime">
+    </div>
+    <button onclick="filterTicketsByTime()">Фільтрувати за часом</button>
+</form>
 <table border="1">
     <thead>
     <tr>
@@ -56,6 +68,19 @@
 </table>
 
 <script>
+
+    function filterTicketsByTime(){
+        const fromTime = new Date(document.getElementById('fromTime').value).getTime();
+        const toTime = new Date(document.getElementById('toTime').value).getTime();
+
+        if(fromTime > toTime){
+            alert('Початковий час більший за кінцевий')
+        }else {
+            const url = location.href
+            location.replace(`${url}?fromTime=${fromTime}&toTime=${toTime}`);
+        }
+    }
+
     // Function to delete a ticket
     function deleteTicket(ticketId) {
         fetch(`/api/tickets/${ticketId}`, {

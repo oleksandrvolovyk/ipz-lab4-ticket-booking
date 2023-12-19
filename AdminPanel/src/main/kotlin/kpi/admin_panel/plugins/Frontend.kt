@@ -5,7 +5,9 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.thymeleaf.*
-import kpi.backend.*
+import kpi.backend.OrderService
+import kpi.backend.TicketService
+import kpi.backend.ViewerService
 import kpi.employees_backend.EmployeeService
 import org.koin.ktor.ext.inject
 
@@ -18,11 +20,11 @@ fun Application.configureFrontend() {
 
     routing {
         get("/") {
-            call.respond(ThymeleafContent("index" , emptyMap()))
+            call.respond(ThymeleafContent("index", emptyMap()))
         }
 
         get("/new-tickets") {
-            call.respond(ThymeleafContent("new-tickets" , emptyMap()))
+            call.respond(ThymeleafContent("new-tickets", emptyMap()))
         }
 
         get("/viewers") {
@@ -54,13 +56,29 @@ fun Application.configureFrontend() {
         }
 
         get("/tickets") {
-            call.respond(
-                ThymeleafContent(
-                    "tickets", mapOf(
-                        "tickets" to ticketService.readAll()
+            val fromTime = call.request.queryParameters["fromTime"]?.toLongOrNull()
+            val toTime = call.request.queryParameters["toTime"]?.toLongOrNull()
+
+            if (fromTime != null && toTime != null) {
+                if (fromTime > toTime) {
+                    call.respond(HttpStatusCode.BadRequest, "fromTime > toTime")
+                }
+                call.respond(
+                    ThymeleafContent(
+                        "tickets", mapOf(
+                            "tickets" to ticketService.readAllInTimeRange(fromTime, toTime)
+                        )
                     )
                 )
-            )
+            } else {
+                call.respond(
+                    ThymeleafContent(
+                        "tickets", mapOf(
+                            "tickets" to ticketService.readAll()
+                        )
+                    )
+                )
+            }
         }
 
         get("/tickets/{id}") {
@@ -100,13 +118,28 @@ fun Application.configureFrontend() {
         }
 
         get("/employees") {
-            call.respond(
-                ThymeleafContent(
-                    "employees", mapOf(
-                        "employees" to employeeService.readAll()
+            val fromAge = call.request.queryParameters["fromAge"]?.toIntOrNull()
+            val toAge = call.request.queryParameters["toAge"]?.toIntOrNull()
+            if (fromAge != null && toAge != null) {
+                if (fromAge > toAge) {
+                    call.respond(HttpStatusCode.BadRequest, "fromAge > toAge")
+                }
+                call.respond(
+                    ThymeleafContent(
+                        "employees", mapOf(
+                            "employees" to employeeService.readAllInAgeRange(fromAge, toAge)
+                        )
                     )
                 )
-            )
+            } else {
+                call.respond(
+                    ThymeleafContent(
+                        "employees", mapOf(
+                            "employees" to employeeService.readAll()
+                        )
+                    )
+                )
+            }
         }
 
         get("/employees/{id}") {
