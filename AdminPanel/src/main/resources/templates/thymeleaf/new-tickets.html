@@ -45,7 +45,7 @@
         const movieTime = new Date(document.getElementById('movieTime').value).getTime();
 
         if (isNaN(maxPlaces) || maxPlaces <= 0 || !movieName || isNaN(movieTime)) {
-            alert('Invalid input. Please fill in all fields with valid values.');
+            alert('Некоректний ввід. Будь ласка, заповніть всі поля коректними значеннями.');
             return;
         }
 
@@ -85,12 +85,13 @@
                     throw new Error('Network response was not ok');
                 }
                 // Handle success if needed
-                alert('Bulk ticket creation successful!');
+                alert('Квитки успішно додано!');
                 document.getElementById('bulkTicketForm').reset();
                 document.getElementById('ticketDataContainer').innerHTML = '';
             })
             .catch(error => {
                 // Handle errors
+                alert("Квитки не вдалось додати :(")
                 console.error('There was a problem with the fetch operation:', error);
             });
     }

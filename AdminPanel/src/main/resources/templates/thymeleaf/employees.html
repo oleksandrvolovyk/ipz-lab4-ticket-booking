@@ -92,6 +92,7 @@
             })
             .catch(error => {
                 // Handle errors
+                alert("Співробітника не вдалось видалити :(")
                 console.error('There was a problem with the fetch operation:', error);
             });
     }
@@ -125,7 +126,8 @@
             })
             .catch(error => {
                 // Handle errors
-                alert('There was a problem with the fetch operation:', error);
+                alert("Нового співробітника не вдалось додати :(")
+                console.log('There was a problem with the fetch operation:', error);
             });
     }
 </script>

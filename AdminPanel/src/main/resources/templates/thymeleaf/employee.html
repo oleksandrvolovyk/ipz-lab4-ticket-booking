@@ -77,10 +77,12 @@
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
+                alert("Зміни успішно збережено!")
                 console.log("Changes saved!")
             })
             .catch(error => {
                 // Handle errors
+                alert("Зміни не вдалось зберегти :(")
                 console.error('There was a problem with the fetch operation:', error);
             });
     }

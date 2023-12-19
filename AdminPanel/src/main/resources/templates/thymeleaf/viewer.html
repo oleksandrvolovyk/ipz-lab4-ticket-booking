@@ -87,7 +87,7 @@
 
         // Check if the match is found
         if (!match) {
-            alert("Viewer ID not found in the URL");
+            alert("Viewer ID не знайдено в URL");
         }
 
         const viewerId = match[1];
@@ -113,10 +113,12 @@
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
+                alert("Зміни успішно збережено!")
                 console.log("Changes saved!")
             })
             .catch(error => {
                 // Handle errors
+                alert("Зміни не вдалось зберегти :(")
                 console.error('There was a problem with the fetch operation:', error);
             });
     }
@@ -298,6 +300,7 @@
             })
             .catch(error => {
                 // Handle errors
+                alert("Квиток не вдалось видалити з замовлення :(")
                 console.error('There was a problem with the fetch operation:', error);
             });
     }

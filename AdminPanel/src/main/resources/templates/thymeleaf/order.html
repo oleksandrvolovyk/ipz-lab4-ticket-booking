@@ -80,10 +80,6 @@
 
 <!-- JavaScript to handle "Go back" button -->
 <script>
-    function goBack() {
-        window.history.back();
-    }
-
     function deleteTicket(ticketId) {
         fetch(`/api/tickets/${ticketId}`, {
             method: 'DELETE',
@@ -99,6 +95,7 @@
             })
             .catch(error => {
                 // Handle errors
+                alert("Квиток не вдалось видалити :(")
                 console.error('There was a problem with the fetch operation:', error);
             });
     }
@@ -120,6 +117,7 @@
             })
             .catch(error => {
                 // Handle errors
+                alert("Квиток не вдалось видалити з замовлення :(")
                 console.error('There was a problem with the fetch operation:', error);
             });
     }
