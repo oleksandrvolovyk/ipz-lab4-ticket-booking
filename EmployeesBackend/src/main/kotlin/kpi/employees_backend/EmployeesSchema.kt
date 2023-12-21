@@ -19,17 +19,21 @@ data class Employee(
     val fullName: String,
     val age: Int,
     val sex: String,
-    val employeeId: String
+    val employeeId: String,
+    val photoId: String? = null
 )
 
 @Serializable
 data class EmployeeDTO(
     val fullName: String,
     val age: Int,
-    val sex: String
+    val sex: String,
+    val photoFileName: String? = null,
+    val photo: ByteArray? = null,
+    val photoStorageMethod: PictureService.StorageMethod? = null
 )
 
-class EmployeeService(database: MongoDatabase) {
+class EmployeeService(database: MongoDatabase, private val pictureService: PictureService) {
     private val collection = database.getCollection<Employee>(collectionName = "employee")
     suspend fun create(employeeDTO: EmployeeDTO): String {
         val employeeId = UUID.randomUUID().toString()
@@ -64,18 +68,42 @@ class EmployeeService(database: MongoDatabase) {
         return collection.find<Employee>(queryParams).toList()
     }
 
-    suspend fun update(employeeId: String, employeeDTO: EmployeeDTO) {
+    suspend fun update(
+        employeeId: String,
+        employeeDTO: EmployeeDTO
+    ) {
+        var photoId: String? = null
+        if (employeeDTO.photoFileName != null && employeeDTO.photo != null && employeeDTO.photoStorageMethod != null) {
+            photoId = pictureService.storePicture(
+                pictureName = employeeDTO.photoFileName,
+                pictureBytes = employeeDTO.photo,
+                storageMethod = employeeDTO.photoStorageMethod
+            )
+        }
+
         val queryParam = eq(Employee::employeeId.name, employeeId)
-        val updateParams = Updates.combine(
-            set(Employee::fullName.name, employeeDTO.fullName),
-            set(Employee::age.name, employeeDTO.age),
-            set(Employee::sex.name, employeeDTO.sex)
-        )
+        val updateParams = if (photoId != null) {
+            Updates.combine(
+                set(Employee::fullName.name, employeeDTO.fullName),
+                set(Employee::age.name, employeeDTO.age),
+                set(Employee::sex.name, employeeDTO.sex),
+                set(Employee::photoId.name, photoId)
+            )
+        } else {
+            Updates.combine(
+                set(Employee::fullName.name, employeeDTO.fullName),
+                set(Employee::age.name, employeeDTO.age),
+                set(Employee::sex.name, employeeDTO.sex)
+            )
+        }
+
         collection.updateOne(filter = queryParam, update = updateParams)
     }
 
     suspend fun delete(employeeId: String) {
         val queryParams = eq(Employee::employeeId.name, employeeId)
+
+        // TODO: Delete photo file(if it was stored as file)
 
         collection.findOneAndDelete(filter = queryParams)
     }

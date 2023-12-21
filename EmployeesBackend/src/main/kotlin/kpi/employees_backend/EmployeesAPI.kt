@@ -1,15 +1,18 @@
 package kpi.employees_backend
 
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.util.pipeline.*
 import org.koin.ktor.ext.inject
 
 fun Application.configureEmployeesAPI() {
 
     val employeeService by inject<EmployeeService>()
+    val pictureService by inject<PictureService>()
 
     routing {
         route("/api") {
@@ -46,9 +49,7 @@ fun Application.configureEmployeesAPI() {
 
                 put("/{id}") {
                     val id = call.parameters["id"] ?: throw IllegalArgumentException("Invalid ID")
-                    val employeeDTO = call.receive<EmployeeDTO>()
-                    employeeService.update(id, employeeDTO)
-                    call.respond(HttpStatusCode.OK)
+                    updateEmployee(id, employeeService)
                 }
 
                 delete("/{id}") {
@@ -57,6 +58,86 @@ fun Application.configureEmployeesAPI() {
                     call.respond(HttpStatusCode.OK)
                 }
             }
+
+            route("/photos") {
+                get {
+                    val pictures = pictureService.readAllPictures()
+
+                    call.respond(pictures)
+                }
+
+                get("/{id}") {
+                    val id = call.parameters["id"] ?: throw IllegalArgumentException("Invalid name")
+
+                    val pictureBytes = pictureService.readPicture(id)
+
+                    if (pictureBytes != null) {
+                        call.respondBytes(pictureBytes)
+                    } else {
+                        call.respond(HttpStatusCode.NotFound)
+                    }
+                }
+            }
         }
+    }
+}
+
+private suspend fun PipelineContext<Unit, ApplicationCall>.updateEmployee(
+    id: String,
+    employeeService: EmployeeService
+) {
+    val formParameters = call.receiveParameters()
+
+    val fullName = formParameters["fullName"]
+    val age = formParameters["age"]?.toIntOrNull()
+    val sex = formParameters["sex"]
+
+    if (fullName == null || age == null || sex == null) {
+        call.respond(HttpStatusCode.BadRequest, "fullName == null || age == null || sex == null")
+    } else {
+        val photoStorageMethod = formParameters["photoStorageMethod"]
+
+        var employeeDTO = EmployeeDTO(
+            fullName = fullName,
+            age = age,
+            sex = sex
+        )
+
+        if (photoStorageMethod != null && photoStorageMethod == "database" || photoStorageMethod == "file") {
+            // With photo
+            val multipartData = call.receiveMultipart()
+
+            var fileName: String? = null
+            var fileBytes: ByteArray? = null
+            multipartData.forEachPart { part ->
+                when (part) {
+                    is PartData.FileItem -> {
+                        fileName = part.originalFileName
+
+                        // TODO: Check file size
+                        fileBytes = part.streamProvider().readBytes()
+                    }
+
+                    else -> {}
+                }
+                part.dispose()
+            }
+
+            if (fileBytes != null && fileName != null) {
+                employeeDTO = employeeDTO.copy(photoFileName = fileName, photo = fileBytes)
+                when (photoStorageMethod) {
+                    "database" -> {
+                        employeeDTO = employeeDTO.copy(photoStorageMethod = PictureService.StorageMethod.DATABASE)
+                    }
+
+                    "file" -> {
+                        employeeDTO = employeeDTO.copy(photoStorageMethod = PictureService.StorageMethod.FILESYSTEM)
+                    }
+                }
+            }
+        }
+
+        employeeService.update(id, employeeDTO)
+        call.respond(HttpStatusCode.OK)
     }
 }

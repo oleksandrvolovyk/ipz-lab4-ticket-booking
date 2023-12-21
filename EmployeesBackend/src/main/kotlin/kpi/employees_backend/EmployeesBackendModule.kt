@@ -4,6 +4,10 @@ import com.mongodb.kotlin.client.coroutine.MongoClient
 import org.koin.dsl.module
 import kotlin.system.exitProcess
 
+// TODO: Move to env vars?
+const val PICTURES_DIRECTORY = "uploads"
+val ALLOWED_PHOTO_EXTENSIONS = arrayOf("jpg", "png", "gif")
+
 val employeesBackendModule = module {
     single {
         val host = System.getenv("MONGO_HOST")
@@ -28,6 +32,13 @@ val employeesBackendModule = module {
         return@single client.getDatabase(databaseName = dbName)
     }
     single {
-        EmployeeService(get())
+        PictureService(
+            database = get(),
+            pictureDirectory = PICTURES_DIRECTORY,
+            allowedPictureExtensions = ALLOWED_PHOTO_EXTENSIONS
+        )
+    }
+    single {
+        EmployeeService(database = get(), pictureService = get())
     }
 }
