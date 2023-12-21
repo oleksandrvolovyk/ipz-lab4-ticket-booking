@@ -23,7 +23,7 @@ data class Picture(
 class PictureService(
     database: MongoDatabase,
     private val pictureDirectory: String,
-    private val allowedPictureExtensions: Array<String>
+    private val pictureFileValidator: PictureFileValidator
 ) {
 
     enum class StorageMethod {
@@ -68,11 +68,10 @@ class PictureService(
     }
 
     suspend fun storePicture(pictureName: String, pictureBytes: ByteArray, storageMethod: StorageMethod): String {
-        if (!allowedFileExtension(pictureName, allowedPictureExtensions)) {
-            // TODO: More robust file type checking
+        if (!pictureFileValidator(pictureBytes)) {
             throw IllegalArgumentException(
                 "${pictureName.fileExtension} is not allowed! " +
-                        "Allowed file extension are: $allowedPictureExtensions"
+                        "Allowed file extension are: PNG, JPEG, GIF"
             )
         }
 

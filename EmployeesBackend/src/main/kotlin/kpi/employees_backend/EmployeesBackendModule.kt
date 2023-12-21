@@ -6,7 +6,7 @@ import kotlin.system.exitProcess
 
 // TODO: Move to env vars?
 const val PICTURES_DIRECTORY = "uploads"
-val ALLOWED_PHOTO_EXTENSIONS = arrayOf("jpg", "png", "gif")
+val MAX_PICTURE_FILE_SIZE_IN_BYTES = 10_000_000 // 10 MB
 
 val employeesBackendModule = module {
     single {
@@ -32,10 +32,13 @@ val employeesBackendModule = module {
         return@single client.getDatabase(databaseName = dbName)
     }
     single {
+        PictureFileValidator(MAX_PICTURE_FILE_SIZE_IN_BYTES)
+    }
+    single {
         PictureService(
             database = get(),
             pictureDirectory = PICTURES_DIRECTORY,
-            allowedPictureExtensions = ALLOWED_PHOTO_EXTENSIONS
+            pictureFileValidator = get()
         )
     }
     single {

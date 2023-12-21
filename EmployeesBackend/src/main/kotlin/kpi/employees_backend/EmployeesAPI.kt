@@ -114,7 +114,6 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.updateEmployee(
                     is PartData.FileItem -> {
                         fileName = part.originalFileName
 
-                        // TODO: Check file size
                         fileBytes = part.streamProvider().readBytes()
                     }
 
