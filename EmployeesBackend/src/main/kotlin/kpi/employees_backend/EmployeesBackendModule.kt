@@ -4,9 +4,8 @@ import com.mongodb.kotlin.client.coroutine.MongoClient
 import org.koin.dsl.module
 import kotlin.system.exitProcess
 
-// TODO: Move to env vars?
-const val PICTURES_DIRECTORY = "uploads"
-val MAX_PICTURE_FILE_SIZE_IN_BYTES = 10_000_000 // 10 MB
+val PICTURES_DIRECTORY = System.getenv("PICTURES_DIRECTORY") ?: "uploads"
+val MAX_PICTURE_FILE_SIZE_IN_BYTES = System.getenv("MAX_PICTURE_FILE_SIZE_IN_BYTES")?.toIntOrNull() ?: 10_000_000 // 10 MB
 
 val employeesBackendModule = module {
     single {
