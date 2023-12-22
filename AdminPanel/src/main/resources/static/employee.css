@@ -51,3 +51,8 @@ select, option{
     color: #242f3d;
     transform: translateY(2px);
 }
+#photoFile{
+    width: fit-content;
+    margin: 0 auto;
+}
+

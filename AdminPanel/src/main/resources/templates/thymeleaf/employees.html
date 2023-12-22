@@ -34,6 +34,7 @@
     <tr>
         <th>ID співробітника</th>
         <th>ПІБ</th>
+        <th>Фото</th>
         <th>Вік</th>
         <th>Стать</th>
         <th colspan="2">Дія</th>
@@ -44,6 +45,7 @@
     <tr th:each="employee : ${employees}">
         <td th:text="${employee.employeeId}"></td>
         <td th:text="${employee.fullName}"></td>
+        <td id="employeePhoto" th:highResPhotoId = "${employee.highResPhotoId}" th:mediumResPhotoId = "${employee.mediumResPhotoId}" th:lowResPhotoId = "${employee.lowResPhotoId}"></td>
         <td th:text="${employee.age}"></td>
         <td th:text="${employee.sex}"></td>
         <!-- Link to employee's page -->
@@ -86,7 +88,42 @@
 
     <button type="button" onclick="submitNewEmployee()">Створити співробітника</button>
 </form>
+<script>
+    window.onload = function () {
+        // Функція для завантаження фотографії відповідно до розміру екрану
+        function loadPhoto(employeePhotoTd, highResPhotoId, mediumResPhotoId, lowResPhotoId) {
+            const screenWidth = window.innerWidth;
 
+            if (screenWidth > 1200 && highResPhotoId) {
+                fetchPhoto(employeePhotoTd, highResPhotoId);
+            } else if (screenWidth > 768 && mediumResPhotoId) {
+                fetchPhoto(employeePhotoTd, mediumResPhotoId);
+            } else if (lowResPhotoId) {
+                fetchPhoto(employeePhotoTd, lowResPhotoId);
+            }
+        }
+
+        // Функція для отримання та вставлення фотографії в td
+        function fetchPhoto(employeePhotoTd, photoId) {
+            const imgElement = document.createElement('img');
+            imgElement.src = `/api/photos/${photoId}`
+            imgElement.alt = 'Employee Photo';
+            employeePhotoTd.appendChild(imgElement);
+        }
+
+
+        // Отримуємо всі елементи td з ідентифікатором employeePhoto
+        const employeePhotoElements = document.querySelectorAll('#employeePhoto');
+
+        // Перебираємо елементи та викликаємо функцію завантаження фотографії для кожного
+        employeePhotoElements.forEach(element => {
+            const highResPhotoId = element.getAttribute('highResPhotoId');
+            const mediumResPhotoId = element.getAttribute('mediumResPhotoId');
+            const lowResPhotoId = element.getAttribute('lowResPhotoId');
+            loadPhoto(element, highResPhotoId, mediumResPhotoId, lowResPhotoId);
+        });
+    }
+</script>
 <script>
 
     function filterEmployeesByAge() {

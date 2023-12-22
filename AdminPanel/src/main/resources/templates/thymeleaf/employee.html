@@ -37,11 +37,23 @@
                 <option value="other" th:selected="${employee.sex == 'other'}">Other</option>
             </select>
         </div>
+        <div>
+            <strong>Фото:</strong>
+            <input type="file" id="photoFile" lang="uk">
+        </div>
+        <div>
+            <strong>Метод збереження фото:</strong>
+            <select id="photoStorageMethod">
+                <option value="file">У файлі</option>
+                <option value="database">У базі даних</option>
+            </select>
+        </div>
         <button onclick="saveEdits()">Зберегти зміни</button>
     </div>
 </div>
 
 <script>
+
     function saveEdits() {
         // Get the current URL
         const currentUrl = window.location.href;
@@ -59,19 +71,20 @@
         const fullName = document.getElementById("fullNameInput").value;
         const age = document.getElementById("ageInput").value;
         const sex = document.getElementById("sexSelect").value;
+        const photoStorageMethod = document.getElementById("photoStorageMethod").value;
+        const photo = document.getElementById("photoFile").files[0]
 
-        const jsonData = {
-            'fullName': fullName,
-            'age': age,
-            'sex': sex
-        }
+        const formData = new FormData()
+        formData.append('fullName', fullName)
+        formData.append('age', age)
+        formData.append('sex', sex)
+        formData.append('photoStorageMethod', photoStorageMethod)
+        formData.append('photo', photo)
+
 
         fetch('/api/employees/' + employeeId, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(jsonData)
+            body: formData
         })
             .then(response => {
                 if (!response.ok) {
