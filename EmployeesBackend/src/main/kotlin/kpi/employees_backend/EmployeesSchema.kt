@@ -5,6 +5,7 @@ import com.mongodb.client.model.Updates
 import com.mongodb.client.model.Updates.set
 import com.mongodb.client.model.Updates.unset
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
 import kotlinx.serialization.Serializable
@@ -83,12 +84,18 @@ class EmployeeService(database: MongoDatabase, private val pictureService: Pictu
         var mediumResPhotoId: String? = null
         var lowResPhotoId: String? = null
 
+        val employee = collection.find<Employee>(eq(Employee::employeeId.name, employeeId)).limit(1).first()
+
+        // Delete previous employee photos
+        employee.highResPhotoId?.let { pictureService.deletePicture(it) }
+        employee.mediumResPhotoId?.let { pictureService.deletePicture(it) }
+        employee.lowResPhotoId?.let { pictureService.deletePicture(it) }
+
         if (employeeDTO.highResPhoto != null &&
             employeeDTO.mediumResPhoto != null &&
             employeeDTO.lowResPhoto != null &&
             employeeDTO.photoStorageMethod != null
         ) {
-
             highResPhotoId = pictureService.storePicture(
                 pictureBytes = employeeDTO.highResPhoto,
                 storageMethod = employeeDTO.photoStorageMethod
@@ -133,8 +140,10 @@ class EmployeeService(database: MongoDatabase, private val pictureService: Pictu
     suspend fun delete(employeeId: String) {
         val queryParams = eq(Employee::employeeId.name, employeeId)
 
-        // TODO: Delete photo file(if it was stored as file)
+        val deletedEmployee = collection.findOneAndDelete(filter = queryParams)
 
-        collection.findOneAndDelete(filter = queryParams)
+        deletedEmployee?.highResPhotoId?.let { pictureService.deletePicture(it) }
+        deletedEmployee?.mediumResPhotoId?.let { pictureService.deletePicture(it) }
+        deletedEmployee?.lowResPhotoId?.let { pictureService.deletePicture(it) }
     }
 }

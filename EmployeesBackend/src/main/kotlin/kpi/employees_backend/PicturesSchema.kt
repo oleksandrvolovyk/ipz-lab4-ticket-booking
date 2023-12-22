@@ -84,6 +84,22 @@ class PictureService(
         }
     }
 
+    suspend fun deletePicture(pictureId: String) {
+        val pictureQueryParams = Filters.eq(Picture::pictureId.name, pictureId)
+
+        val picture = collection.find<Picture>(pictureQueryParams).limit(1).firstOrNull() ?: return
+
+        if (picture.pictureFilePath != null) {
+            if (Files.exists(Paths.get(picture.pictureFilePath))) {
+                withContext(Dispatchers.IO) {
+                    Files.delete(Paths.get(picture.pictureFilePath))
+                }
+            }
+        }
+
+        collection.findOneAndDelete(pictureQueryParams)
+    }
+
     @OptIn(ExperimentalEncodingApi::class)
     private suspend fun storePictureInDatabase(pictureBytes: ByteArray): String {
         val base64EncodedPicture = Base64.encode(pictureBytes)
