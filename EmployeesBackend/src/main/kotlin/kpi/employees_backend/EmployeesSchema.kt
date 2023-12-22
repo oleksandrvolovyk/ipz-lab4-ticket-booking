@@ -3,6 +3,7 @@ package kpi.employees_backend
 import com.mongodb.client.model.Filters.*
 import com.mongodb.client.model.Updates
 import com.mongodb.client.model.Updates.set
+import com.mongodb.client.model.Updates.unset
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
@@ -20,7 +21,10 @@ data class Employee(
     val age: Int,
     val sex: String,
     val employeeId: String,
-    val photoId: String? = null
+
+    val highResPhotoId: String? = null,
+    val mediumResPhotoId: String? = null,
+    val lowResPhotoId: String? = null
 )
 
 @Serializable
@@ -28,8 +32,11 @@ data class EmployeeDTO(
     val fullName: String,
     val age: Int,
     val sex: String,
-    val photoFileName: String? = null,
-    val photo: ByteArray? = null,
+
+    val highResPhoto: ByteArray? = null,
+    val mediumResPhoto: ByteArray? = null,
+    val lowResPhoto: ByteArray? = null,
+
     val photoStorageMethod: PictureService.StorageMethod? = null
 )
 
@@ -72,28 +79,51 @@ class EmployeeService(database: MongoDatabase, private val pictureService: Pictu
         employeeId: String,
         employeeDTO: EmployeeDTO
     ) {
-        var photoId: String? = null
-        if (employeeDTO.photoFileName != null && employeeDTO.photo != null && employeeDTO.photoStorageMethod != null) {
-            photoId = pictureService.storePicture(
-                pictureName = employeeDTO.photoFileName,
-                pictureBytes = employeeDTO.photo,
+        var highResPhotoId: String? = null
+        var mediumResPhotoId: String? = null
+        var lowResPhotoId: String? = null
+
+        if (employeeDTO.highResPhoto != null &&
+            employeeDTO.mediumResPhoto != null &&
+            employeeDTO.lowResPhoto != null &&
+            employeeDTO.photoStorageMethod != null
+        ) {
+
+            highResPhotoId = pictureService.storePicture(
+                pictureBytes = employeeDTO.highResPhoto,
+                storageMethod = employeeDTO.photoStorageMethod
+            )
+
+            mediumResPhotoId = pictureService.storePicture(
+                pictureBytes = employeeDTO.mediumResPhoto,
+                storageMethod = employeeDTO.photoStorageMethod
+            )
+
+            lowResPhotoId = pictureService.storePicture(
+                pictureBytes = employeeDTO.lowResPhoto,
                 storageMethod = employeeDTO.photoStorageMethod
             )
         }
 
         val queryParam = eq(Employee::employeeId.name, employeeId)
-        val updateParams = if (photoId != null) {
+
+        val updateParams = if (highResPhotoId != null && mediumResPhotoId != null && lowResPhotoId != null) {
             Updates.combine(
                 set(Employee::fullName.name, employeeDTO.fullName),
                 set(Employee::age.name, employeeDTO.age),
                 set(Employee::sex.name, employeeDTO.sex),
-                set(Employee::photoId.name, photoId)
+                set(Employee::highResPhotoId.name, highResPhotoId),
+                set(Employee::mediumResPhotoId.name, mediumResPhotoId),
+                set(Employee::lowResPhotoId.name, lowResPhotoId),
             )
         } else {
             Updates.combine(
                 set(Employee::fullName.name, employeeDTO.fullName),
                 set(Employee::age.name, employeeDTO.age),
-                set(Employee::sex.name, employeeDTO.sex)
+                set(Employee::sex.name, employeeDTO.sex),
+                unset(Employee::highResPhotoId.name),
+                unset(Employee::mediumResPhotoId.name),
+                unset(Employee::lowResPhotoId.name),
             )
         }
 

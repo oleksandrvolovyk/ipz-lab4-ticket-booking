@@ -7,7 +7,14 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.pipeline.*
+import net.coobird.thumbnailator.Thumbnails
 import org.koin.ktor.ext.inject
+import java.awt.image.BufferedImage
+import java.io.ByteArrayOutputStream
+
+const val HIGH_RES_PHOTO_SIZE_IN_PIXELS = 256
+const val MEDIUM_RES_PHOTO_SIZE_IN_PIXELS = 128
+const val LOW_RES_PHOTO_SIZE_IN_PIXELS = 64
 
 fun Application.configureEmployeesAPI() {
 
@@ -107,14 +114,11 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.updateEmployee(
             // With photo
             val multipartData = call.receiveMultipart()
 
-            var fileName: String? = null
-            var fileBytes: ByteArray? = null
+            val filesBytes = mutableListOf<ByteArray>()
             multipartData.forEachPart { part ->
                 when (part) {
                     is PartData.FileItem -> {
-                        fileName = part.originalFileName
-
-                        fileBytes = part.streamProvider().readBytes()
+                        filesBytes.add(part.streamProvider().readBytes())
                     }
 
                     else -> {}
@@ -122,8 +126,29 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.updateEmployee(
                 part.dispose()
             }
 
-            if (fileBytes != null && fileName != null) {
-                employeeDTO = employeeDTO.copy(photoFileName = fileName, photo = fileBytes)
+            if (filesBytes.isNotEmpty()) {
+                // Resize the image using Thumbnailator
+                val highResPhoto = Thumbnails.of(filesBytes[0].inputStream())
+                    .size(HIGH_RES_PHOTO_SIZE_IN_PIXELS, HIGH_RES_PHOTO_SIZE_IN_PIXELS)
+                    .asBufferedImage()
+                    .toByteArray(HIGH_RES_PHOTO_SIZE_IN_PIXELS, HIGH_RES_PHOTO_SIZE_IN_PIXELS)
+
+                val mediumResPhoto = Thumbnails.of(filesBytes[0].inputStream())
+                    .size(MEDIUM_RES_PHOTO_SIZE_IN_PIXELS, MEDIUM_RES_PHOTO_SIZE_IN_PIXELS)
+                    .asBufferedImage()
+                    .toByteArray(MEDIUM_RES_PHOTO_SIZE_IN_PIXELS, MEDIUM_RES_PHOTO_SIZE_IN_PIXELS)
+
+                val lowResPhoto = Thumbnails.of(filesBytes[0].inputStream())
+                    .size(LOW_RES_PHOTO_SIZE_IN_PIXELS, LOW_RES_PHOTO_SIZE_IN_PIXELS)
+                    .asBufferedImage()
+                    .toByteArray(LOW_RES_PHOTO_SIZE_IN_PIXELS, LOW_RES_PHOTO_SIZE_IN_PIXELS)
+
+                employeeDTO = employeeDTO.copy(
+                    highResPhoto = highResPhoto,
+                    mediumResPhoto = mediumResPhoto,
+                    lowResPhoto = lowResPhoto
+                )
+
                 when (photoStorageMethod) {
                     "database" -> {
                         employeeDTO = employeeDTO.copy(photoStorageMethod = PictureService.StorageMethod.DATABASE)
@@ -139,4 +164,22 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.updateEmployee(
         employeeService.update(id, employeeDTO)
         call.respond(HttpStatusCode.OK)
     }
+}
+
+private fun BufferedImage.toByteArray(width: Int, height: Int): ByteArray {
+    val byteArrayOutputStream = ByteArrayOutputStream()
+
+    try {
+        Thumbnails.of(this)
+            .outputFormat("png")
+            .outputQuality(1.0)
+            .size(width, height)
+            .toOutputStream(byteArrayOutputStream)
+
+    } catch (e: Exception) {
+        // Handle exceptions (e.g., unable to write image to stream)
+        e.printStackTrace()
+    }
+
+    return byteArrayOutputStream.toByteArray()
 }

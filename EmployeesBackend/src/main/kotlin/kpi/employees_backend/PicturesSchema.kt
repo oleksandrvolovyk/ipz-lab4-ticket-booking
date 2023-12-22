@@ -67,22 +67,21 @@ class PictureService(
         }
     }
 
-    suspend fun storePicture(pictureName: String, pictureBytes: ByteArray, storageMethod: StorageMethod): String {
+    suspend fun storePicture(pictureBytes: ByteArray, storageMethod: StorageMethod): String {
         if (!pictureFileValidator(pictureBytes)) {
             throw IllegalArgumentException(
-                "${pictureName.fileExtension} is not allowed! " +
-                        "Allowed file extension are: PNG, JPEG, GIF"
+                "File is not a picture is not allowed! Allowed picture extensions are: PNG, JPEG, GIF"
             )
         }
 
         return when (storageMethod) {
-            StorageMethod.DATABASE -> storePictureInDatabase(pictureName, pictureBytes)
-            StorageMethod.FILESYSTEM -> storePictureInFilesystem(pictureName, pictureBytes)
+            StorageMethod.DATABASE -> storePictureInDatabase(pictureBytes)
+            StorageMethod.FILESYSTEM -> storePictureInFilesystem(pictureBytes)
         }
     }
 
     @OptIn(ExperimentalEncodingApi::class)
-    private suspend fun storePictureInDatabase(pictureName: String, pictureBytes: ByteArray): String {
+    private suspend fun storePictureInDatabase(pictureBytes: ByteArray): String {
         val base64EncodedPicture = Base64.encode(pictureBytes)
 
         val pictureId = UUID.randomUUID().toString()
@@ -98,10 +97,10 @@ class PictureService(
         return pictureId
     }
 
-    private suspend fun storePictureInFilesystem(pictureName: String, pictureBytes: ByteArray): String {
+    private suspend fun storePictureInFilesystem(pictureBytes: ByteArray): String {
         val pictureId = UUID.randomUUID().toString()
 
-        val localFileName = "$pictureDirectory/$pictureId.${pictureName.fileExtension}"
+        val localFileName = "$pictureDirectory/$pictureId"
         File(localFileName).writeBytes(pictureBytes)
 
         collection.insertOne(
@@ -114,10 +113,4 @@ class PictureService(
 
         return pictureId
     }
-
-    private val String.fileExtension: String
-        get() = this.substringAfterLast(".").lowercase(Locale.getDefault())
-
-    private fun allowedFileExtension(filename: String, allowedFileExtensions: Array<String>): Boolean =
-        filename.substringAfterLast(".") in allowedFileExtensions
 }
