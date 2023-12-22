@@ -2,12 +2,16 @@ package kpi.employees_backend
 
 import com.mongodb.client.model.Filters
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Transient
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.*
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
@@ -99,6 +103,12 @@ class PictureService(
 
     private suspend fun storePictureInFilesystem(pictureBytes: ByteArray): String {
         val pictureId = UUID.randomUUID().toString()
+
+        withContext(Dispatchers.IO) {
+            if (!Files.exists(Paths.get(pictureDirectory))) {
+                Files.createDirectory(Paths.get(pictureDirectory))
+            }
+        }
 
         val localFileName = "$pictureDirectory/$pictureId"
         File(localFileName).writeBytes(pictureBytes)
