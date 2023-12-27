@@ -20,6 +20,7 @@ fun Application.configureEmployeesAPI() {
 
     val employeeService by inject<EmployeeService>()
     val pictureService by inject<PictureService>()
+    val pictureFileValidator by inject<PictureFileValidator>()
 
     routing {
         route("/api") {
@@ -56,7 +57,7 @@ fun Application.configureEmployeesAPI() {
 
                 put("/{id}") {
                     val id = call.parameters["id"] ?: throw IllegalArgumentException("Invalid ID")
-                    updateEmployee(id, employeeService)
+                    updateEmployee(id, employeeService, pictureFileValidator)
                 }
 
                 delete("/{id}") {
@@ -91,7 +92,8 @@ fun Application.configureEmployeesAPI() {
 
 private suspend fun PipelineContext<Unit, ApplicationCall>.updateEmployee(
     id: String,
-    employeeService: EmployeeService
+    employeeService: EmployeeService,
+    pictureFileValidator: PictureFileValidator
 ) {
     val formParameters = call.receiveParameters()
 
@@ -127,6 +129,13 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.updateEmployee(
             }
 
             if (filesBytes.isNotEmpty()) {
+                if (!pictureFileValidator(filesBytes[0])) {
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        "Picture file is not allowed! Allowed picture extensions are: PNG, JPEG, GIF"
+                    )
+                    return
+                }
                 // Resize the image using Thumbnailator
                 val highResPhoto = Thumbnails.of(filesBytes[0].inputStream())
                     .size(HIGH_RES_PHOTO_SIZE_IN_PIXELS, HIGH_RES_PHOTO_SIZE_IN_PIXELS)

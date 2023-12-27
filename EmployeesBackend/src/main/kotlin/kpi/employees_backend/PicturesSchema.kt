@@ -71,17 +71,9 @@ class PictureService(
         }
     }
 
-    suspend fun storePicture(pictureBytes: ByteArray, storageMethod: StorageMethod): String {
-        if (!pictureFileValidator(pictureBytes)) {
-            throw IllegalArgumentException(
-                "File is not a picture is not allowed! Allowed picture extensions are: PNG, JPEG, GIF"
-            )
-        }
-
-        return when (storageMethod) {
-            StorageMethod.DATABASE -> storePictureInDatabase(pictureBytes)
-            StorageMethod.FILESYSTEM -> storePictureInFilesystem(pictureBytes)
-        }
+    suspend fun storePicture(pictureBytes: ByteArray, storageMethod: StorageMethod): String = when (storageMethod) {
+        StorageMethod.DATABASE -> storePictureInDatabase(pictureBytes)
+        StorageMethod.FILESYSTEM -> storePictureInFilesystem(pictureBytes)
     }
 
     suspend fun deletePicture(pictureId: String) {
